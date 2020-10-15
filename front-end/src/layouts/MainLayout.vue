@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Flow App
+          <img id="logo" src="../assets/logo-white-plain.png" />
         </q-toolbar-title>
 
         <q-toggle @input="darkMode" v-model="dark" label="Dark mode" />
@@ -170,5 +170,11 @@ export default {
 }
 .avatar-bg {
   background-image: linear-gradient(to left bottom, #2d6cb5, #1a154c);
+}
+#logo {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  top: 4px;
 }
 </style>
