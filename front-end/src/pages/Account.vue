@@ -14,6 +14,10 @@
               v-model="memberName"
               autofocus
               @keyup.enter="prompt = false"
+              :rules="[
+              val => (val && val.length > 0) || 'Cannot be empty',
+              val => (val.length < 30) || 'Name too long'
+          ]"
             />
             <p class="details">Department</p>
             <q-input
@@ -21,6 +25,10 @@
               v-model="department"
               autofocus
               @keyup.enter="prompt = false"
+               :rules="[
+              val => (val && val.length > 0) || 'Cannot be empty',
+              val => (val.length < 30) || 'Department name too long'
+          ]"
             />
             <p class="details">Division</p>
             <q-input
@@ -28,6 +36,10 @@
               v-model="division"
               autofocus
               @keyup.enter="prompt = false"
+               :rules="[
+              val => (val && val.length > 0) || 'Cannot be empty',
+              val => (val.length < 30) || 'Division name too long'
+          ]"
             />
             <p class="details">Position</p>
             <q-input
@@ -35,6 +47,10 @@
               v-model="position"
               autofocus
               @keyup.enter="prompt = false"
+               :rules="[
+              val => (val && val.length > 0) || 'Cannot be empty',
+              val => (val.length < 30) || 'Position name too long'
+          ]"
             />
             <p class="details">Facebook</p>
             <q-input
@@ -42,6 +58,10 @@
               v-model="facebook"
               autofocus
               @keyup.enter="prompt = false"
+               :rules="[
+              val => (val && val.length > 0) || 'Cannot be empty',
+              val => (val.length < 50) || 'Facebook link too long'
+          ]"
             />
             <p class="details">Git</p>
             <q-input
@@ -49,6 +69,10 @@
               v-model="git"
               autofocus
               @keyup.enter="prompt = false"
+               :rules="[
+              val => (val && val.length > 0) || 'Cannot be empty',
+              val => (val.length < 30) || 'Git link too long'
+          ]"
             />
           </q-card-section>
 
@@ -67,17 +91,17 @@
         />
       </q-avatar>
     </div>
-    <div class="account-info">
-      <q-list>
-        <div class="vertical-center">
+     <div class="vertical-center">
           <q-btn
             @click="toggleEditInfo"
             id="edit-btn"
             round
             color="primary"
-            icon="rate_review"
+            icon="create"
           />
         </div>
+    <div class="account-info">
+      <q-list>
         <chip :elementName="`Nume`" :elementValue="this.memberName"></chip>
         <chip
           :elementName="`Departament`"
@@ -138,11 +162,18 @@ export default {
 .account-info {
   display: flex;
   justify-content: center;
+  background-image: linear-gradient(to left bottom, #2d6cb5, #1a154c);
+  align-items: center;
+  margin: 0 auto;
+  width: fit-content;
+  padding:1%;
+  border-radius: 8px;
 }
 .q-chip {
   padding: 7px 12px;
   width: 120px;
 }
+
 
 /* .row {
   justify-content: center;
@@ -160,7 +191,6 @@ export default {
 }
 .q-btn {
   position: relative;
-  left: 43px;
   align-self: center;
 
   height: 45px;
@@ -171,7 +201,7 @@ export default {
 
 .vertical-center {
   position: relative;
-  left: 39px;
+  display:flex;
   justify-content: center;
   margin-bottom: 4px;
   margin-top: 4px;
@@ -185,4 +215,12 @@ export default {
   margin-top: 5px;
   text-align: center;
 }
+.q-chip[data-v-39323a7c]{
+  width: auto;
+}
+.q-list{
+  margin-top: 5px;
+}
+
+
 </style>

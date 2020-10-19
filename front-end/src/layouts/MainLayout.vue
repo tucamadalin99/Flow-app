@@ -112,7 +112,7 @@
             Account
           </q-item-label>
 
-          <q-item clickable exact to="/">
+          <q-item clickable exact to="/changePass">
             <q-item-section avatar>
               <q-icon name="ion-lock" />
             </q-item-section>

@@ -74,6 +74,7 @@ export default {
           icon: "cloud_done",
           message: "Submitted"
         });
+        this.$router.push("/");
       }
     },
 

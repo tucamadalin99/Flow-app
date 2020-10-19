@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-center">
+  <div class="flex flex-center chip-container">
     <q-chip dense size="xl">
       <div class="info">
         <div class="text-caption" id="elName">{{ elementName }}</div>
@@ -16,7 +16,7 @@ export default {
 </script>
 <style scoped>
 .q-chip {
-  width: 200px;
+  width:100%;
   height: 50px;
   margin-bottom: 10px;
   display: flex;
@@ -48,5 +48,8 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
+}
+.chip-container{
+  width:100%;
 }
 </style>

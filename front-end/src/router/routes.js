@@ -25,6 +25,13 @@ const routes = [
       { path: '', component: () => import('pages/Account.vue') }
     ]
   },
+  {
+    path: '/changePass',
+     component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Password.vue') }
+    ]
+   }
 
 ]
 
