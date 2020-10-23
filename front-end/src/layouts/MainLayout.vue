@@ -60,7 +60,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable exact to="/">
+          <q-item clickable exact to="/activity">
             <q-item-section avatar>
               <q-icon name="analytics" />
             </q-item-section>
@@ -78,7 +78,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable exact to="/">
+          <q-item clickable exact to="/tasks">
             <q-item-section avatar>
               <q-icon name="ion-construct" />
             </q-item-section>
@@ -99,7 +99,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable exact to="/">
+          <q-item clickable exact to="/board">
             <q-item-section avatar>
               <q-icon name="ion-compass" />
             </q-item-section>
@@ -121,7 +121,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable exact to="/home">
+          <q-item clickable exact to="/login">
             <q-item-section avatar>
               <q-icon name="ion-exit" />
             </q-item-section>

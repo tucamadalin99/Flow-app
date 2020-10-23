@@ -210,10 +210,12 @@ export default {
   justify-content: center;
 }
 .details {
-  margin: 0 auto;
+  /* margin: 0 auto; */
   margin-bottom: 2px;
   margin-top: 5px;
-  text-align: center;
+  /* 
+   */
+  color: rgba(60, 68, 66, 0.445);
 }
 .q-chip[data-v-39323a7c]{
   width: auto;

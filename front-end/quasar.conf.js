@@ -102,7 +102,7 @@ cfg.module.rules.push({
       plugins: []
     },
 
-    // animations: 'all', // --- includes all animations
+     animations: 'all', // --- includes all animations
     // https://quasar.dev/options/animations
     animations: [],
 

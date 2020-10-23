@@ -31,7 +31,28 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Password.vue') }
     ]
-   }
+  },
+  {
+    path: '/activity',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Activity.vue') }
+    ]
+  },
+  {
+    path: '/tasks',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Tasks.vue') }
+    ]
+  },
+  {
+    path: '/board',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Board.vue') }
+    ]
+  }
 
 ]
 

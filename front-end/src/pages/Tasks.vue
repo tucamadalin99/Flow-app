@@ -1,6 +1,6 @@
 <template>
-    <div class="activity-container">
-        <h2><strong>Activity</strong></h2>
+    <div class="tasks-container">
+        <h2><strong>Tasks</strong></h2>
         
     </div>
 </template>
