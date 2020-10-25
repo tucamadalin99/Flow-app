@@ -90,7 +90,7 @@
             Contact
           </q-item-label>
 
-          <q-item clickable exact to="/">
+          <q-item clickable exact to="/contacts">
             <q-item-section avatar>
               <q-icon name="ion-people" />
             </q-item-section>

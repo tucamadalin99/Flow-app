@@ -30,11 +30,11 @@
           <div
             :key="timestamp.date + agenda.time"
             :label="agenda.time"
-            class="justify-start q-ma-sm shadow-5 bg-grey-6"
+            class="justify-start q-ma-sm shadow-5 calendar-card"
           >
             <div v-if="agenda.avatar" class="row justify-center" style="margin-top: 30px; width: 100%;">
               <q-avatar style="margin-top: -25px; margin-bottom: 10px; font-size: 60px; max-height: 50px;">
-                <img :src="agenda.avatar" style="border: #9e9e9e solid 5px;">
+                <img :src="agenda.avatar" style="border: #9e9e9e solid 2px;">
               </q-avatar>
             </div>
             <div class="col-12 q-px-sm">
@@ -76,11 +76,11 @@ export default {
       transition: '',
       agenda: {
         // value represents day of the week
-        1: [
+        0: [
           {
             time: '08:00',
             avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
-            desc: 'Meeting with CEO'
+            desc: 'Meeting with Antonia Calugaru'
           },
           {
             time: '08:30',
@@ -90,25 +90,25 @@ export default {
           {
             time: '10:00',
             avatar: 'https://cdn.quasar.dev/img/avatar1.jpg',
-            desc: 'Meeting with Karen'
+            desc: 'Meeting with Tucanul'
           }
         ],
         2: [
           {
             time: '11:30',
             avatar: 'https://cdn.quasar.dev/img/avatar2.jpg',
-            desc: 'Meeting with Alisha'
+            desc: 'Meeting with BE-BC'
           },
           {
             time: '17:00',
             avatar: 'https://cdn.quasar.dev/img/avatar3.jpg',
-            desc: 'Meeting with Sarah'
+            desc: 'Meeting with Codrin Nisioiu'
           }
         ],
         3: [
           {
             time: '08:00',
-            desc: 'Stand-up SCRUM',
+            desc: 'Sedinta STS',
             avatar: 'https://cdn.quasar.dev/img/material.png'
           },
           {
@@ -117,7 +117,7 @@ export default {
           },
           {
             time: '10:00',
-            desc: 'Sprint planning',
+            desc: 'Sedinta SpringIT',
             avatar: 'https://cdn.quasar.dev/img/material.png'
           },
           {
@@ -273,15 +273,29 @@ export default {
       return this.agenda[parseInt(day.weekday, 10)]
     },
     onPrev () {
-      const ts = QCalendar.addToDate(this.parsedStart, { day: -7 })
-      this.selectedDate = ts.date
-      this.transition = 'q-transition--' + this.transitionPrev
+      const ts = QCalendar.addToDate(this.parsedStart, { day: -7 });
+      this.selectedDate = ts.date;
+      this.transition = 'q-transition--' + this.transitionPrev;
     },
 
     onNext () {
-      const ts = QCalendar.addToDate(this.parsedStart, { day: 7 })
-      this.selectedDate = ts.date
-      this.transition = 'q-transition--' + this.transitionNext
+      const ts = QCalendar.addToDate(this.parsedStart, { day: 7 });
+      this.selectedDate = ts.date;
+      this.transition = 'q-transition--' + this.transitionNext;
+      this.agenda[1] = [
+          {
+            time: '09:00',
+            avatar: 'https://cdn.quasar.dev/img/avatar3.jpg'
+          },
+          {
+            time: '10:00',
+            avatar: 'https://cdn.quasar.dev/img/avatar2.jpg'
+          },
+          {
+            time: '13:00',
+            avatar: 'https://cdn.quasar.dev/img/material.png'
+          }
+        ]
     },
 
     dayClass (day) {
@@ -320,7 +334,13 @@ export default {
         this.locale,
         (_tms, short) => short ? shortOptions : longOptions
       )
+    },
+    test() {
+      console.log('asd');
     }
+  },
+  mounted() {
+    console.log(this.agenda[1])
   }
 }
 </script>
@@ -352,5 +372,9 @@ export default {
 
 .right-btn
  margin-left: auto;
+
+.calendar-card 
+ background-image: linear-gradient(to left bottom, #2d6cb5, #1a154c);
+ color: #ffffff;
     
 </style>
