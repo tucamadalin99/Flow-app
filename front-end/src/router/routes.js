@@ -52,6 +52,13 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Board.vue') }
     ]
+  },
+  {
+    path: '/agenda',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Agenda.vue') }
+    ]
   }
 
 ]

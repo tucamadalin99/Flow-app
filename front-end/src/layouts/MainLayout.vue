@@ -69,7 +69,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable exact to="/">
+          <q-item clickable exact to="/agenda">
             <q-item-section avatar>
               <q-icon name="ion-calendar" />
             </q-item-section>
