@@ -1,5 +1,6 @@
 <template class="log">
   <div class="flex flex-center page">
+    <particles-bg color="#ffffff" num=100 type="cobweb" :canvas="{backgroundColor:'#2E6CB5'}" :bg="true"/>
     <div class="logDiv" style="max-width: 500px">
       <img src="../assets/logo.png" class="login-icon-container" />
       <q-form
@@ -42,6 +43,7 @@
 
         <div class="btns">
           <q-btn label="Login" type="submit" color="primary" />
+          <p id="sign-up">Not a Flow member? <a href="http://localhost:8080/#/register">Sign up here.</a></p>
         </div>
       </q-form>
     </div>
@@ -49,6 +51,7 @@
 </template>
 
 <script>
+import {ParticlesBg} from 'particles-bg-vue'
 export default {
   data() {
     return {
@@ -56,6 +59,9 @@ export default {
       password: null,
       accept: false
     };
+  },
+   components:{
+      ParticlesBg
   },
 
   methods: {
@@ -99,17 +105,19 @@ export default {
   padding: 50px 70px;
   border-radius: 5px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  margin-top: 2%;
 }
 
 .btns {
   text-align: center;
 }
 
-.page {
-  /* background-color: white; */
+/* .page {
+   background-color: white; 
   background-image: linear-gradient(to right bottom, #2d6cb5, #1a154c);
   height: 100vh;
 }
+*/
 
 .q-input {
   width: 300px;
@@ -124,14 +132,24 @@ export default {
   align-items: center;
 }
 
+#sign-up{
+  margin-top: 10px;
+}
+
+.canvas{
+  background-image: linear-gradient(to right bottom, #2d6cb5, #1a154c);
+}
+
 @media only screen and (max-width: 600px) {
   .q-page {
     background-image: none;
     background-color: white;
   }
   .logDiv {
-    background-color: transparent;
+    background-color: white;
     padding: 0;
+    width:100vh;
+    height: 100vh;
     border-radius: 0px;
     box-shadow: none;
   }
@@ -143,5 +161,10 @@ export default {
   .login-icon-container {
     width: 200px;
   }
+
+  .canvas{
+      display: none;
+  }
+ 
 }
 </style>

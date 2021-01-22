@@ -1,5 +1,6 @@
 <template>
   <div class="account-container">
+     <particles-bg color="#2d6cb5" num=80 type="cobweb" :canvas="{backgroundColor:'#fffff'}" :bg="true"/>
     <div class="edit-popup">
       <q-dialog v-model="prompt" persistent>
         <q-card style="min-width: 350px">
@@ -118,6 +119,7 @@
 
 <script>
 import chip from "../components/Chip";
+import {ParticlesBg} from 'particles-bg-vue'
 export default {
   name: "AccountPage",
   data() {
@@ -135,7 +137,7 @@ export default {
     };
   },
   components: {
-    chip
+    chip, ParticlesBg
   },
   methods: {
     toggleEditInfo: function() {

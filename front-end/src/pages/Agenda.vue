@@ -280,8 +280,10 @@ export default {
 
     onNext () {
       const ts = QCalendar.addToDate(this.parsedStart, { day: 7 });
+     
       this.selectedDate = ts.date;
       this.transition = 'q-transition--' + this.transitionNext;
+      
       this.agenda[1] = [
           {
             time: '09:00',
@@ -292,10 +294,11 @@ export default {
             avatar: 'https://cdn.quasar.dev/img/avatar2.jpg'
           },
           {
-            time: '13:00',
+            time: '15:00',
             avatar: 'https://cdn.quasar.dev/img/material.png'
           }
         ]
+      
     },
 
     dayClass (day) {

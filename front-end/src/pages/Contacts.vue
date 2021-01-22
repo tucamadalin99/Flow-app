@@ -1,65 +1,225 @@
 <template>
-  <div class="q-pa-md">
-    <q-option-group
-      v-model="separator"
-      inline
-      class="q-mb-md"
-      :options="[
-        { label: 'Cell', value: 'cell' },
-      ]"
-    />
+    <div class="q-pa-md">
+    <div class="row q-col-gutter-sm">
+      <!-- <div class="col">
+        <q-table
+          title="Simple"
+          :data="data"
+          :columns="columns"
+          row-key="name"
+          dense
+        >
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props">
+              <q-btn dense round flat color="grey" @click="editRow(props)" icon="edit"></q-btn>
+              <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
+            </q-td>          
+          </template>
+        </q-table>
+      </div> -->
+      <div class="col">
+        <q-table
+          flat
+          bordered
+          class="statement-table"
+          title="Contacts"
+          :data="userData"
+          :hide-header="mode === 'grid'"
+          :columns="currencyColumns"
+          row-key="__index"
+          :grid="mode == 'grid'"
+          :filter="filter"
+          virtual-scroll
+          :pagination.sync="pagination"
+          :rows-per-page-options="[0]"
+        >
+          <template v-slot:top-right="props">
+            <q-input
+              outlined
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Search"
+            >
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
 
-    <q-table
-      title="Treats"
-      :data="data"
-      :columns="columns"
-      row-key="name"
-      :separator="separator"
-    />
+            <q-btn
+              flat
+              round
+              dense
+              :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+              @click="setFs(props)"
+            >
+              <q-tooltip :disable="$q.platform.is.mobile" v-close-popup>{{
+                props.inFullscreen ? "Exit Fullscreen" : "Toggle Fullscreen"
+              }}</q-tooltip>
+            </q-btn>
 
-     <q-dialog v-model="card">
-      <q-card class="my-card">
-        <q-img src="https://cdn.quasar.dev/img/chicken-salad.jpg" />
-
-        <q-card-section>
-          <q-btn
-            fab
-            color="primary"
-            icon="place"
-            class="absolute"
-            style="top: 0; right: 12px; transform: translateY(-50%);"
-          />
-
-          <div class="row no-wrap items-center">
-            <div class="col text-h6 ellipsis">
-              Cafe Basilico
+            <q-btn
+              flat
+              round
+              dense
+              :icon="mode === 'grid' ? 'list' : 'grid_on'"
+              @click="mode = mode === 'grid' ? 'list' : 'grid'"
+            >
+              <q-tooltip :disable="$q.platform.is.mobile" v-close-popup>{{mode === "grid" ? "List" : "Grid"}}</q-tooltip>
+            </q-btn>
+            <div class="q-pa-sm q-gutter-sm">
+              <q-dialog v-model="show_dialog">
+                <q-card style="width: 600px; max-width: 60vw">
+                  <q-card-section>
+                    <q-btn round flat dense icon="close" class="float-right" color="grey-8" v-close-popup></q-btn>
+                    <div class="text-h6">Update Item</div>
+                  </q-card-section>
+                  <q-separator inset></q-separator>
+                  <q-card-section class="q-pt-none">
+                    <q-form class="q-gutter-md">
+                      <q-list>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label class="q-pb-xs">Name</q-item-label>
+                            <q-input dense outlined v-model="editedItem.name" />
+                          </q-item-section>
+                        </q-item>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label class="q-pb-xs">Email</q-item-label>
+                            <q-input dense outlined v-model="editedItem.email" />
+                          </q-item-section>
+                        </q-item>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label class="q-pb-xs">Phone</q-item-label>
+                            <q-input dense outlined v-model="editedItem.phone" />
+                          </q-item-section>
+                        </q-item>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label class="q-pb-xs">Spot</q-item-label>
+                            <q-input dense outlined v-model="editedItem.spotRate" />
+                          </q-item-section>
+                        </q-item>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label class="q-pb-xs">Sell</q-item-label>
+                            <q-input dense outlined v-model="editedItem.phone" />
+                          </q-item-section>
+                        </q-item>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label class="q-pb-xs">Symbol</q-item-label>
+                            <q-input dense outlined v-model="editedItem.symbol" />
+                          </q-item-section>
+                        </q-item>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label class="q-pb-xs">Status:Active/Disable</q-item-label>
+                            <q-input dense outlined v-model="editedItem.status" />
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-form>
+                  </q-card-section>
+                  <q-card-section>
+                    <q-card-actions align="right">
+                      <q-btn
+                        flat
+                        label="Cancel"
+                        color="warning"
+                        dense
+                        v-close-popup
+                      ></q-btn>
+                      <q-btn
+                        flat
+                        label="OK"
+                        color="primary"
+                        dense
+                        v-close-popup
+                        @click="updateRow"
+                      ></q-btn>
+                    </q-card-actions>
+                  </q-card-section>
+                </q-card>
+              </q-dialog>
             </div>
-            <div class="col-auto text-grey text-caption q-pt-md row no-wrap items-center">
-              <q-icon name="place" />
-              250 ft
+          </template>
+          
+          <template #body-cell-status="props">
+            <q-td :props="props">
+                <q-chip
+                  :color="props.row.status == 'Active' ? 'green': props.row.status == 'Disable' ? 'red': 'grey'"
+                  text-color="white"
+                  dense
+                  class="text-weight-bolder"
+                  square
+                >{{props.row[props.col.name]}}</q-chip>
+            </q-td>
+          </template>
+          <template #body-cell-action="props">
+            <q-td>
+              <q-btn dense flat round color="blue" field="edit" icon="person" @click="editItem(props.row)"></q-btn>
+              </q-td>
+          </template>
+          
+<!--           <template v-slot:bottom>
+            <div class="pagination-total q-mt-sm flex flex-center">
+              <div class="text-medium-regular">
+                Total {{ userData.length }}
+                <span v-if="totalRecord > 1">results</span>
+                <span v-else>result</span>
+              </div>
             </div>
-          </div>
+            <div class="pagination-container q-my-sm flex flex-center">
+              <q-pagination
+                v-model="page"
+                color="secondary"
+                :input="true"
+                :max="pageCount"
+                :max-pages="6"
+                @input="fetchData(false)"
+                :boundary-numbers="true"
+              />
+            </div>
+          </template> -->
 
-          <q-rating v-model="stars" :max="5" size="32px" />
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <div class="text-subtitle1">
-            $・Italian, Cafe
-          </div>
-          <div class="text-caption text-grey">
-            Small plates, salads & sandwiches in an intimate setting.
-          </div>
-        </q-card-section>
-
-        <q-separator />
-
-        <q-card-actions align="right">
-          <q-btn v-close-popup flat color="primary" label="Reserve" />
-          <q-btn v-close-popup flat color="primary" round icon="event" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+          <template v-slot:item="props">
+            <div
+              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+              :style="props.selected ? 'transform: scale(0.95);' : ''"
+            >
+              <q-card :class="props.selected ? 'bg-grey-2' : ''">
+    <!--             <q-card-section>
+                  <q-checkbox dense v-model="props.selected" :label="props.row.name"></q-checkbox>
+                  {{props.row.name}}
+                </q-card-section>
+                <q-separator></q-separator> -->
+                <q-list dense>
+                  <q-item v-for="col in props.cols" :key="col.name">
+                    <q-item-section>
+                      <q-item-label>{{ col.label }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-chip v-if="col.name === 'status'"
+                        :color="props.row.status == 'Active' ? 'green': props.row.status == 'Disable' ? 'red': 'grey'"
+                        text-color="white"
+                        dense
+                        class="text-weight-bolder"
+                        square
+                      >{{col.value}}</q-chip>
+                      <q-btn v-else-if="col.name === 'action'" dense flat color="primary" field="edit" icon="person" @click="editItem(props.row)" ></q-btn>
+                      <q-item-label v-else caption :class="col.classes ? col.classes : ''">{{ col.value }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-card>
+            </div>
+          </template>
+        </q-table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -67,155 +227,228 @@
 export default {
   data () {
     return {
-      card: false,
-
-      slide: 1,
-      lorem: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus, ratione eum minus fuga, quasi dicta facilis corporis magnam, suscipit at quo nostrum!',
-
-      stars: 3,
-
-      slideVol: 39,
-      slideAlarm: 56,
-      slideVibration: 63,
-      separator: 'cell',
-
+      inFs: false,
       columns: [
-        {
-          name: 'desc',
-          required: true,
-          label: 'Name',
-          align: 'center',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'phone', align: 'center', label: 'Phone', field: 'phone', sortable: true },
-        { name: 'gmail', label: 'Gmail', label:'Gmail', field: 'gmail', sortable: true },
-        { name: 'profile', label: 'Profile', field: 'carbs' },
+        // { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
+        // { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
+        // { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
+        // { name: 'protein', label: 'Protein (g)', field: 'protein' },
+        // { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
         
       ],
-      data: [
+    
+      noti: () => {},
+      show_dialog: false,
+      editedIndex: -1,
+      editedItem: {
+        name: "",
+        email: "",
+        phone: "",
+        spotRate: "",
+        phone: "",
+        symbol: "",
+        status: ""
+      },
+      defaultItem: {
+        name: "",
+        email: "",
+        phone: "",
+        spotRate: "",
+        phone: "",
+        symbol: "",
+        status: ""
+      },
+      filter: "",
+      mode: "list",
+      currencyColumns: [
         {
-          name: 'Frozen Yogurt',
-          gmail: 'ypg@gmail.com',
-          phone: '0723319930',
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
+          name: "name",
+          align: "left",
+          label: "Name",
+          field: "name",
+          sortable: true
         },
+        // {
+        //   name: "email",
+        //   required: true,
+        //   label: "email",
+        //   align: "left",
+        //   field: "email",
+        //   sortable: true
+        // },
         {
-          name: 'Ice cream sandwich',
-          gmail: 'ice@gmail.com',
-          phone: '0723319930',
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
+          name: "email",
+          align: "center",
+          label: "Email",
+          field: "email",
+          sortable: true,
+          classes: 'text-green email'
         },
+        // {
+        //   name: "spotRate",
+        //   align: "left",
+        //   label: "Spot Rate",
+        //   field: "spotRate",
+        //   sortable: true
+        // },
         {
-          name: 'Eclair',
-          gmail: 'ecl@gmail.com',
-          phone: '0723319930',
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
+          name: "phone",
+          align: "left",
+          label: "Phone",
+          field: "phone",
+          sortable: true,
+          classes: 'text-green'
         },
+        // {
+        //   name: "symbol",
+        //   align: "center",
+        //   labelalign: "left",
+        //   label: "Symbol",
+        //   field: "symbol",
+        //   sortable: true
+        // },
         {
-          name: 'Cupcake',
-          gmail: 305,
-          phone: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
+          name: "status",
+          align: "center",
+          label: "Status",
+          field: "status",
+          sortable: true
         },
-        {
-          name: 'Gingerbread',
-          gmail: 356,
-          phone: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          gmail: 375,
-          phone: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          gmail: 392,
-          phone: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          gmail: 408,
-          phone: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          gmail: 452,
-          phone: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          gmail: 'kitgat@gmail.com',
-          phone: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
+         {
+          name: "action",
+          align: "left",
+          label: "Profile",
+          field: "action"
         }
-      ]
+      ],
+      userData: [
+        {
+          name: "Malaysian Rinngit",
+          email: "MYR@gmail.com",
+          phone: "07239919930",
+          spotRate: "4.19",
+          symbol: "RM",
+          status: "Active"
+        },
+        {
+          name: "Singapore Dollar",
+          email: "SGD@gmail.com",
+          phone: "07239919930",
+          spotRate: "x.xx",
+          symbol: "$",
+          status: "Active"
+        },
+        {
+          name: "Chinese Yuan",
+          email: "CNY@gmail.com",
+          phone: "07239919930",
+          spotRate: "x.xx",
+
+          symbol: "¥",
+          status: "Active"
+        },
+        {
+          name: "Malaysian Rinngit",
+          email: "MYR@gmail.com",
+          phone: "07239919930",
+          spotRate: "4.19",
+          symbol: "RM",
+          status: "Active"
+        },
+        {
+          name: "Singapore Dollar",
+          email: "SGD@gmail.com",
+          phone: "07239919930",
+          spotRate: "x.xx",
+          symbol: "$",
+          status: "Active"
+        },
+        {
+          name: "Chinese Yuan",
+          email: "CNY@gmail.com",
+          phone: "07239919930",
+          spotRate: "x.xx",
+          symbol: "¥",
+          status: "Active"
+        }
+      ],
+      pagination: {
+        page: 1,
+      },
+      page: 1,
+      totalRecord: 0,
+      pageCount: 1,
     }
   },
   methods: {
-      rowDetails: () => {
-          document.querySelectorAll('.q-table--cell-separator tbody td').forEach(el => {
-              el.addEventListener('click', () => {
-                  console.log('mai am un pic, merg acasa vedem maine')
-              })
-          })
-
+    editRow(props) {
+      this.noti()
+      // do something
+      this.noti = this.$q.notify({
+        type: 'info',
+        textColor: 'grey-10',
+        multiLine: true,
+        message: `I'll edit row data => ${JSON.stringify(props.row).split(',').join(', ')}`,
+        timeout: 2000
+      })
+    },
+    deleteRow(props){
+      this.noti()
+      // do something
+      this.noti = this.$q.notify({
+        type: 'negative',
+        multiline: true,
+        message: `I'll delete row data => ${JSON.stringify(props.row).split(',').join(', ')}`,
+        timeout: 2000
+      })
+    },
+    addRow() {
+      if (this.editedIndex > -1) {
+        Object.assign(this.userData[this.editedIndex], this.editedItem);
+      } else {
+        this.userData.push(this.editedItem);
       }
+      this.close()
+    },
+    deleteItem(item) {
+      const index = this.userData.indexOf(item);
+      confirm("Are you sure you want to delete this item?") &&
+        this.userData.splice(index, 1);
+    },
+    editItem(item) {
+      this.editedIndex = this.userData.findIndex((v, i) =>v.__index === item.__index)
+      this.editedItem = Object.assign({}, item);
+      this.show_dialog = true;
+    },
+    close () {
+      this.show_dialog = false
+      setTimeout(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      }, 300)
+    },
+    setFs(props){
+      props.toggleFullscreen()
+      this.inFs = props.inFullscreen
+    },
+    updateRow() {
+      this.userData.splice(this.editedIndex, 1, this.editedItem)
+      this.$q.notify({type:"positive", message: `Item '${this.editedItem.name}' updated.`, timeout: 500 })
+    }
   },
   mounted() {
-      this.rowDetails();
+    // add indices
+    this.userData = this.userData.map((v, i) => ({ ...v, __index: i}))
   }
-}
+}    
+    
 </script>
 
-<style>
- .q-option-group {
-     display: none;
- }
+<style scoped>
+.email:hover{
+    background-color:lightcoral;
+}
+td:hover{
+    color:lightcoral;
+}
 </style>
