@@ -4,14 +4,14 @@ module.exports = (sequelize, DataTypes) => {
         {
             name: DataTypes.STRING,
             surname: DataTypes.STRING,
-            companyID: DataTypes.INTEGER,
-            departmentID: DataTypes.INTEGER,
             division: DataTypes.STRING,
             role: DataTypes.STRING,
             email: DataTypes.STRING,
             password: DataTypes.STRING,
             facebook: DataTypes.STRING,
             git: DataTypes.STRING,
+            performance: DataTypes.FLOAT,
+            isLead: DataTypes.BOOLEAN,
             isManager: DataTypes.BOOLEAN,
             isCEO: DataTypes.BOOLEAN
 

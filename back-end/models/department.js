@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         "department",
         {
             name: DataTypes.STRING,
+            desc: DataTypes.STRING
 
         }
     )

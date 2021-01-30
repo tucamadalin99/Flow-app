@@ -1,6 +1,12 @@
 <template class="log">
   <div class="flex flex-center page">
-    <particles-bg color="#ffffff" num=100 type="cobweb" :canvas="{backgroundColor:'#2E6CB5'}" :bg="true"/>
+    <particles-bg
+      color="#ffffff"
+      num="100"
+      type="cobweb"
+      :canvas="{ backgroundColor: '#2E6CB5' }"
+      :bg="true"
+    />
     <div class="logDiv" style="max-width: 500px">
       <img src="../assets/logo.png" class="login-icon-container" />
       <q-form
@@ -15,11 +21,11 @@
           label="Email"
           lazy-rules
           :rules="[
-            val => (val && val.length > 0) || 'Cannot be empty',
-            val =>
+            (val) => (val && val.length > 0) || 'Cannot be empty',
+            (val) =>
               (val &&
                 val.match(/^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$/)) ||
-              'Invalid email'
+              'Invalid email',
           ]"
         >
           <template v-slot:prepend>
@@ -33,7 +39,7 @@
           v-model="password"
           label="Password"
           lazy-rules
-          :rules="[val => (val && val.length > 0) || 'Cannot be empty']"
+          :rules="[(val) => (val && val.length > 0) || 'Cannot be empty']"
         >
           <template v-slot:prepend>
             <q-icon name="lock"></q-icon>
@@ -43,7 +49,10 @@
 
         <div class="btns">
           <q-btn label="Login" type="submit" color="primary" />
-          <p id="sign-up">Not a Flow member? <a href="http://localhost:8080/#/register">Sign up here.</a></p>
+          <p id="sign-up">
+            Not a Flow member?
+            <a href="http://localhost:8080/#/register">Sign up here.</a>
+          </p>
         </div>
       </q-form>
     </div>
@@ -51,17 +60,18 @@
 </template>
 
 <script>
-import {ParticlesBg} from 'particles-bg-vue'
+import { ParticlesBg } from "particles-bg-vue";
+import Axios from "axios";
 export default {
   data() {
     return {
       email: null,
       password: null,
-      accept: false
+      accept: false,
     };
   },
-   components:{
-      ParticlesBg
+  components: {
+    ParticlesBg,
   },
 
   methods: {
@@ -71,16 +81,34 @@ export default {
           color: "red-5",
           textColor: "white",
           icon: "warning",
-          message: "You need to accept the license and terms first"
+          message: "You need to accept the license and terms first",
         });
       } else {
-        this.$q.notify({
-          color: "green-4",
-          textColor: "white",
-          icon: "cloud_done",
-          message: "Submitted"
-        });
-        this.$router.push("/");
+        Axios.post(
+          "http://localhost:8081/api/user/login",
+          { email: this.email, password: this.password },
+          { withCredentials: true }
+        )
+          .then(() => {
+            this.$q.notify({
+              color: "indigo-8",
+              textColor: "white",
+              icon: "cloud_done",
+              message: `Welcome to Flow`,
+            });
+            this.$router.push("/");
+          })
+          .catch((err) => {
+            const errValues = Object.values(err.response.data);
+            errValues.map((item) => {
+              this.$q.notify({
+                color: "red-9",
+                textColor: "white",
+                icon: "error",
+                message: item,
+              });
+            });
+          });
       }
     },
 
@@ -91,11 +119,11 @@ export default {
     },
     clicked() {
       alert("test");
-    }
+    },
   },
   created() {
     this.$q.dark.set(false);
-  }
+  },
 };
 </script>
 <style scoped>
@@ -132,11 +160,11 @@ export default {
   align-items: center;
 }
 
-#sign-up{
+#sign-up {
   margin-top: 10px;
 }
 
-.canvas{
+.canvas {
   background-image: linear-gradient(to right bottom, #2d6cb5, #1a154c);
 }
 
@@ -148,7 +176,7 @@ export default {
   .logDiv {
     background-color: white;
     padding: 0;
-    width:100vh;
+    width: 100vh;
     height: 100vh;
     border-radius: 0px;
     box-shadow: none;
@@ -162,9 +190,8 @@ export default {
     width: 200px;
   }
 
-  .canvas{
-      display: none;
+  .canvas {
+    display: none;
   }
- 
 }
 </style>

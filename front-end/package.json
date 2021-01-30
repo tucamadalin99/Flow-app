@@ -2,7 +2,7 @@
   "name": "new-app",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "Flow App",
   "author": "TucaMadalin <maad368@gmail.com>",
   "private": true,
   "scripts": {
