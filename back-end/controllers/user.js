@@ -36,6 +36,24 @@ const controller = {
     logout: async (req, res) => {
         req.logOut();
         res.status(200).send({ message: "Logged out" });
+    },
+
+    updateUser: async (req, res) => {
+        let currentUser = await req.user;
+        currentUser.update({
+            name: req.body.name,
+            surname: req.body.surname,
+            division: req.body.division,
+            role: req.body.role,
+            email: req.body.email,
+            facebook: req.body.facebook,
+            git: req.body.git
+
+        }).then(() => {
+            res.status(201).send({ message: "User succesfully updated" })
+        }).catch(() => {
+            res.status(500).send({ message: "Server error" })
+        })
     }
 }
 

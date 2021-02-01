@@ -15,12 +15,13 @@
         class="login-page-input-container"
       >
         <q-input
+          ref="name"
           filled
           type="text"
           v-model="name"
           label="Name"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Cannot be empty']"
+          :rules="[nonEmpty, letterOnly]"
         >
           <template v-slot:prepend>
             <q-icon name="looks_one"></q-icon>
@@ -28,12 +29,13 @@
         </q-input>
 
         <q-input
+          ref="surname"
           filled
           type="text"
           v-model="surname"
           label="Surname"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Cannot be empty']"
+          :rules="[nonEmpty, letterOnly]"
         >
           <template v-slot:prepend>
             <q-icon name="looks_two"></q-icon>
@@ -41,12 +43,13 @@
         </q-input>
 
         <q-input
+          ref="companie"
           filled
           type="text"
           v-model="companie"
           label="Company"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Cannot be empty']"
+          :rules="[nonEmpty, letterOnly]"
         >
           <template v-slot:prepend>
             <q-icon name="business"></q-icon>
@@ -54,12 +57,14 @@
         </q-input>
 
         <q-select
+          ref="department"
           @input="populateDivDrop"
           filled
           id="dropdown-dep"
           v-model="department"
           :options="optionsDep"
           label="Department"
+          :rules="[nonEmptySelect]"
         >
           <template v-slot:prepend>
             <q-icon name="work"></q-icon>
@@ -67,11 +72,14 @@
         </q-select>
 
         <q-select
+          ref="division"
           filled
           id="dropdown-div"
           v-model="divizie"
           :options="optionsDiv"
           label="Division"
+          lazy-rules
+          :rules="[nonEmptySelect]"
         >
           <template v-slot:prepend>
             <q-icon name="view_agenda"></q-icon>
@@ -79,12 +87,13 @@
         </q-select>
 
         <q-input
+          ref="role"
           filled
           type="text"
           v-model="pozitie"
           label="Role"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Cannot be empty']"
+          :rules="[nonEmpty, letterOnly]"
         >
           <template v-slot:prepend>
             <q-icon name="build"></q-icon>
@@ -92,13 +101,13 @@
         </q-input>
 
         <q-input
+          ref="email"
           filled
           v-model="email"
           type="email"
           label="Email"
           lazy-rules
           :rules="[
-            (val) => (val && val.length > 0) || 'Cannot be empty',
             (val) =>
               (val &&
                 val.match(/^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$/)) ||
@@ -111,12 +120,13 @@
         </q-input>
 
         <q-input
+          ref="password"
           filled
           type="password"
           v-model="password"
           label="Password"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Cannot be empty']"
+          :rules="[nonEmpty]"
         >
           <template v-slot:prepend>
             <q-icon name="lock"></q-icon>
@@ -124,12 +134,13 @@
         </q-input>
 
         <q-input
+          ref="facebook"
           filled
           type="text"
           v-model="facebook"
           label="Facebook profile"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Cannot be empty']"
+          :rules="[nonEmpty]"
         >
           <template v-slot:prepend>
             <q-icon name="facebook"></q-icon>
@@ -137,12 +148,17 @@
         </q-input>
 
         <q-input
+          ref="git"
           filled
           type="text"
           v-model="git"
           label="Git"
           lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Cannot be empty']"
+          :rules="[
+            () => {
+              if (!nonEmpty) this.valid = false;
+            },
+          ]"
         >
           <template v-slot:prepend>
             <q-icon name="device_hub"></q-icon>
@@ -150,12 +166,7 @@
         </q-input>
 
         <div class="btns">
-          <q-btn
-            label="Sign up"
-            type="submit"
-            color="primary"
-            @click="onSubmit()"
-          />
+          <q-btn label="Sign up" type="submit" color="primary" />
           <p id="to-login">
             Already a member?
             <a href="http://localhost:8080/#/login"> Go back </a> to login
@@ -169,6 +180,13 @@
 <script>
 import { ParticlesBg } from "particles-bg-vue";
 import Axios from "axios";
+import {
+  nonEmpty,
+  emailPattern,
+  nonEmptySelect,
+  letterOnly,
+} from "../util/validations";
+
 export default {
   data() {
     return {
@@ -190,6 +208,7 @@ export default {
       email: null,
       password: null,
       accept: false,
+      valid: true,
     };
   },
   components: {
@@ -200,9 +219,9 @@ export default {
     onSubmit() {
       let depId = 0;
       if (this.department === "Sales") depId = 1;
-      else if (this.department === "Public Relations") depId = 3;
-      else if (this.department === "Human Resources") depId = 4;
-      else if (this.department === "Information Technology") depId = 5;
+      else if (this.department === "Public Relations") depId = 2;
+      else if (this.department === "Human Resources") depId = 3;
+      else if (this.department === "Information Technology") depId = 4;
       let user = {
         name: this.name,
         surname: this.surname,
@@ -214,27 +233,46 @@ export default {
         git: this.git,
         departmentId: depId,
       };
-      Axios.post("http://localhost:8081/api/user/register", user)
-        .then(() => {
-          this.$q.notify({
-            color: "indigo-8",
-            textColor: "white",
-            icon: "cloud_done",
-            message: "User registered! You may login now",
-          });
-          this.$router.push("/login");
-        })
-        .catch((err) => {
-          const errValues = Object.values(err.response.data);
-          errValues.map((item) => {
+      const refs = this.$refs;
+      refs.name.validate();
+      refs.surname.validate();
+      refs.division.validate();
+      refs.role.validate();
+      refs.email.validate();
+      refs.password.validate();
+      refs.facebook.validate();
+      refs.git.validate();
+      if (
+        refs.name.hasError ||
+        refs.surname.hasError ||
+        refs.division.hasError ||
+        refs.role.hasError ||
+        refs.email.hasError ||
+        refs.password.hasError ||
+        refs.facebook.hasError ||
+        refs.git.hasError
+      )
+        Axios.post("http://localhost:8081/api/user/register", user)
+          .then(() => {
             this.$q.notify({
-              color: "red-9",
+              color: "indigo-8",
               textColor: "white",
-              icon: "error",
-              message: item,
+              icon: "cloud_done",
+              message: "User registered! You may login now",
+            });
+            this.$router.push("/login");
+          })
+          .catch((err) => {
+            const errValues = Object.values(err.response.data);
+            errValues.map((item) => {
+              this.$q.notify({
+                color: "red-9",
+                textColor: "white",
+                icon: "error",
+                message: item,
+              });
             });
           });
-        });
     },
 
     populateDivDrop() {
@@ -255,6 +293,10 @@ export default {
     clicked() {
       alert("test");
     },
+    nonEmpty,
+    emailPattern,
+    nonEmptySelect,
+    letterOnly,
   },
   created() {
     this.$q.dark.set(false);
@@ -263,7 +305,7 @@ export default {
 </script>
 <style scoped>
 .regDiv {
-  margin-top: 2%;
+  margin-top: 10px;
   background-color: white;
   text-align: center;
   padding: 50px 70px;

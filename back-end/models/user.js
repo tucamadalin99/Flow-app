@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
             facebook: DataTypes.STRING,
             git: DataTypes.STRING,
             performance: DataTypes.FLOAT,
+            salary: DataTypes.FLOAT,
             isLead: DataTypes.BOOLEAN,
             isManager: DataTypes.BOOLEAN,
             isCEO: DataTypes.BOOLEAN

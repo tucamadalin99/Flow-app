@@ -1,14 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/user');
+const userController = require('../controllers').user;
 const middleware = require('../controllers/middleware');
-const passport = require('passport');
 
 
+///GET REGION
+
+
+///////////////
+
+///POST REGION
 router.post('/register', userController.register);
 
 router.post('/login', middleware.checkAuth, userController.login);
+///////////////
 
+///PUT REGION
+router.put('/updateInfo', middleware.checkNotAuth, userController.updateUser);
+
+
+//////////////
 router.delete('/logout', middleware.checkNotAuth, userController.logout);
 
 
