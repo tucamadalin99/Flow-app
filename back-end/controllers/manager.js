@@ -1,4 +1,6 @@
 const UserModel = require('../models').User;
+const TaskModel = require('../models').Task;
+const validateManager = require('./validations/manager');
 
 const controller = {
 
@@ -29,12 +31,17 @@ const controller = {
             }
         })
         if (userFound) {
-            userFound.update({ isLead: !userFound.isLead }).then(() => {
-                let info = (userFound.isLead ? "promoted to Lead" : "demoted to Member");
-                res.status(200).send({ message: `${userFound.name} ${userFound.surname} ${info}` })
-            }).catch(err => {
-                res.status(500).send(err);
-            })
+            let projectName = req.body.projectName;
+            if (projectName) {
+                userFound.update({ isLead: projectName }).then(() => {
+                    res.status(200).send({ message: `${userFound.name} ${userFound.surname} promoted to Lead on ${projectName}` })
+                }).catch(err => {
+                    res.status(500).send(err);
+                })
+            } else {
+                userFound.update({ isLead: "" }).then(() => res.status(200).send({ message: `${userFound.name} ${userFound.surname} demoted to member` }))
+                    .catch(() => res.status(500).send({ message: "Server error" }))
+            }
         } else {
             res.status(400).send({ message: "No user found with this email in your department" });
         }
@@ -45,6 +52,23 @@ const controller = {
         UserModel.findAll({ where: { departmentId: currentUser.departmentId } }).then(users => {
             res.status(200).send(users)
         }).catch(err => res.status(500).send(err));
+    },
+
+    addTask: async (req, res) => {
+        const task = {
+            name: req.body.name,
+            startDate: req.body.startDate,
+            endDate: req.body.endDate,
+            type: req.body.type,
+            status: "In progress"
+        }
+        let errors = validateManager.task(task)
+        if (Object.keys(errors).length === 0) {
+            TaskModel.create(task).then(() => res.status(201).send({ message: "Task created" }))
+                .catch(() => res.status(500).send({ message: "Server error" }))
+        } else {
+            return res.status(400).send(errors);
+        }
     }
 }
 

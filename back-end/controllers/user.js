@@ -15,7 +15,7 @@ const controller = {
             facebook: req.body.facebook,
             git: req.body.git,
             performance: 0.0,
-            isLead: false,
+            isLead: "",
             isManager: false,
             isCEO: false,
             departmentId: req.body.departmentId

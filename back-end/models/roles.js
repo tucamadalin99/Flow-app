@@ -1,8 +1,8 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define(
-        "projectRef",
+        "roles",
         {
-            projectId: DataTypes.INTEGER
+            role: DataTypes.STRING,
 
         }
     )

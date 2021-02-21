@@ -1,8 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define(
-        "projectRef",
+        "rolesRef",
         {
-            projectId: DataTypes.INTEGER
+            roleId: DataTypes.INTEGER,
+            userId: DataTypes.INTEGER,
 
         }
     )
