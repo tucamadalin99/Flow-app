@@ -24,19 +24,20 @@ const controller = {
     },
 
     assignRoleOnProject: async (req, res) => {
-        console.log("wtf");
         const assignment = {
             userId: req.body.userId,
             roleId: req.body.roleId,
             projectId: req.body.projectId
         }
-        //let errors = validateManager.role(assignment);
-        // if (Object.keys(errors.length) === 0) {
-        RoleRefModel.create(assignment).then(() => res.status(201).send({ message: `User ${assignment.userId} assigned on ${assignment.projectId} with the role ${assignment.roleId}` }))
-            .catch(() => res.status(500).send({ message: "Server error" }))
-        // } else {
-        //     return res.status(400).send(errors);
-        // }
+        let errors = validateManager.role(assignment);
+        console.log(errors);
+        if (Object.keys(errors).length === 0) {
+            RoleRefModel.create(assignment)
+                .then(() => res.status(201).send({ message: `User ${assignment.userId} assigned on ${assignment.projectId} with the role ${assignment.roleId}` }))
+                .catch((err) => res.status(500).send(err))
+        } else {
+            return res.status(400).send(errors);
+        }
     },
 
     collectUserDataFromDepartment: async (req, res) => {

@@ -1,6 +1,8 @@
 const UserModel = require('../models').User;
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const ProjectRefModel = require('../models').ProjectRef;
+const validateUser = require('./validations/user');
 
 const controller = {
     register: async (req, res) => {
@@ -21,11 +23,17 @@ const controller = {
             departmentId: req.body.departmentId
         };
 
-        UserModel.create(newUser).then(() => {
-            res.status(201).send({ message: "User registered successfully." })
-        }).catch((err) => {
-            res.status(501).send(err);
-        })
+        let errors = await validateUser.register(newUser);
+        if (Object.keys(errors).length === 0) {
+            UserModel.create(newUser).then(() => {
+                res.status(201).send({ message: "User registered successfully." })
+            }).catch((err) => {
+                res.status(501).send(err);
+            })
+        } else {
+            return res.status(400).send(errors);
+        }
+
     },
 
     login: passport.authenticate("local", {
@@ -54,6 +62,24 @@ const controller = {
         }).catch(() => {
             res.status(500).send({ message: "Server error" })
         })
+    },
+
+    assignSelfToTask: async (req, res) => {
+        let currentUser = await req.user;
+        let assignment = {
+            userId: currentUser.id,
+            projectId: req.body.projectId,
+            taskId: req.body.taskId
+        }
+
+        let errors = validateUser.task(assignment);
+        if (Object.keys(errors).length === 0) {
+            ProjectRefModel.create(assignment)
+                .then(() => res.status(201).send({ message: "You have assigned on the task succesfully." }))
+                .catch(err => res.status(500).send(err));
+        } else {
+            return res.status(400).send(errors);
+        }
     }
 }
 
