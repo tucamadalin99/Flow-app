@@ -1,5 +1,7 @@
 const connection = require('../models').connection;
 const DepartmentModel = require('../models').Department;
+const ProjectModel = require('../models').Project;
+const RoleModel = require('../models').Role;
 
 const controller = {
     reset: async (req, res) => {
@@ -21,6 +23,21 @@ const controller = {
                 await DepartmentModel.create(department);
 
             }
+
+            const projects = ["Tap That Job", "SpringIT", "Serile Teatrului Studentesc", "Academia SpErantei", "Dare to Speak"];
+            let project = { name: "" }
+            for (let i = 0; i < projects.length; i++) {
+                project.name = projects[i];
+                await ProjectModel.create(project);
+            }
+
+            const roles = ["Member", "Team Lead", "Project Manager"]
+            let role = { role: "" };
+            for (let i = 0; i < roles.length; i++) {
+                role.role = roles[i];
+                await RoleModel.create(role);
+            }
+
             res.status(200).send({ message: "Database reset/created!" });
         }).catch(err => {
             res.status(500).send(err);

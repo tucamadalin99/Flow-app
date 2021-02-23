@@ -1,4 +1,7 @@
 const UserModel = require('../models').User;
+const TaskModel = require('../models').Task;
+const RoleRefModel = require('../models').RoleRef;
+const validateManager = require('./validations/manager');
 
 const controller = {
 
@@ -20,23 +23,20 @@ const controller = {
         }
     },
 
-    modifyLead: async (req, res) => {
-        const currentUser = await req.user;
-        const userFound = await UserModel.findOne({
-            where: {
-                email: req.body.email,
-                departmentId: currentUser.departmentId
-            }
-        })
-        if (userFound) {
-            userFound.update({ isLead: !userFound.isLead }).then(() => {
-                let info = (userFound.isLead ? "promoted to Lead" : "demoted to Member");
-                res.status(200).send({ message: `${userFound.name} ${userFound.surname} ${info}` })
-            }).catch(err => {
-                res.status(500).send(err);
-            })
+    assignRoleOnProject: async (req, res) => {
+        const assignment = {
+            userId: req.body.userId,
+            roleId: req.body.roleId,
+            projectId: req.body.projectId
+        }
+        let errors = validateManager.role(assignment);
+        console.log(errors);
+        if (Object.keys(errors).length === 0) {
+            RoleRefModel.create(assignment)
+                .then(() => res.status(201).send({ message: `User ${assignment.userId} assigned on ${assignment.projectId} with the role ${assignment.roleId}` }))
+                .catch((err) => res.status(500).send(err))
         } else {
-            res.status(400).send({ message: "No user found with this email in your department" });
+            return res.status(400).send(errors);
         }
     },
 
@@ -45,6 +45,23 @@ const controller = {
         UserModel.findAll({ where: { departmentId: currentUser.departmentId } }).then(users => {
             res.status(200).send(users)
         }).catch(err => res.status(500).send(err));
+    },
+
+    addTask: async (req, res) => {
+        const task = {
+            name: req.body.name,
+            startDate: req.body.startDate,
+            endDate: req.body.endDate,
+            type: req.body.type,
+            status: "In progress"
+        }
+        let errors = validateManager.task(task)
+        if (Object.keys(errors).length === 0) {
+            TaskModel.create(task).then(() => res.status(201).send({ message: "Task created" }))
+                .catch(() => res.status(500).send({ message: "Server error" }))
+        } else {
+            return res.status(400).send(errors);
+        }
     }
 }
 

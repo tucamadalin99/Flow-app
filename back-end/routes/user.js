@@ -13,6 +13,8 @@ const middleware = require('../controllers/middleware');
 router.post('/register', userController.register);
 
 router.post('/login', middleware.checkAuth, userController.login);
+
+router.post('/assignTask', middleware.checkNotAuth, userController.assignSelfToTask);
 ///////////////
 
 ///PUT REGION

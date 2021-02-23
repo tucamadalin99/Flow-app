@@ -1,18 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define(
-        "projectRef",
+        "rolesRef",
         {
             id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-            projectId: DataTypes.INTEGER,
+            roleId: DataTypes.INTEGER,
             userId: DataTypes.INTEGER,
-            taskId: DataTypes.INTEGER
+            projectId: DataTypes.INTEGER,
         },
         {
             uniqueKeys: {
                 actions_unique: {
-                    fields: ['userId', 'taskId']
+                    fields: ['userId', 'projectId']
                 }
             }
         }
+
     )
 }
