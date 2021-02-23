@@ -7,7 +7,6 @@ const ProjectRefModel = require('./projectRef');
 const RoleModel = require('./roles');
 const RoleRefModel = require('./rolesRef');
 const db = require('../config/db');
-const roles = require('./roles');
 
 const User = UserModel(db, Sequelize);
 const Department = DepartmentModel(db, Sequelize);
@@ -20,39 +19,58 @@ const RoleRef = RoleRefModel(db, Sequelize);
 Department.hasMany(User);
 User.belongsTo(Department);
 
-User.belongsToMany(Role, {
-    through: "rolesRef",
-})
-Role.belongsToMany(User, {
-    through: "rolesRef",
-})
-//BUGS TO SOLVE
-Project.belongsToMany(Role, {
-    through: "rolesRef",
-})
+User.hasMany(RoleRef, { foreignKey: 'userId' });
+RoleRef.belongsTo(User, { foreignKey: 'userId' });
 
-Role.belongsToMany(Project, {
-    through: "rolesRef",
+Project.hasMany(RoleRef, { foreignKey: 'projectId' });
+RoleRef.belongsTo(Project, { foreignKey: 'projectId' });
 
-})
+Role.hasMany(RoleRef, { foreignKey: 'roleId' });
+RoleRef.belongsTo(Role, { foreignKey: 'roleId' });
 
-User.belongsToMany(Project, {
-    through: 'projectRef',
-    foriegnKey: "projectId"
-})
+User.hasMany(ProjectRef, { foreignKey: "userId" });
+ProjectRef.belongsTo(User, { foreignKey: "userId" });
 
-Project.belongsToMany(User, {
-    through: 'projectRef',
-    foriegnKey: "projectId"
-})
+Project.hasMany(ProjectRef, { foreignKey: "projectId" });
+ProjectRef.belongsTo(Project, { foreignKey: "projectId" });
 
-User.belongsToMany(Task, {
-    through: 'projectRef'
-})
+Task.hasMany(ProjectRef, { foreignKey: "taskId" });
+ProjectRef.belongsTo(Task, { foreignKey: "taskId" });
 
-Task.belongsToMany(User, {
-    through: 'projectRef'
-})
+
+// User.belongsToMany(Role, {
+//     through: "rolesRef",
+// });
+
+
+
+// User.belongsToMany(Project, {
+//     through: "rolesRef"
+// })
+
+// Role.belongsToMany(User, {
+//     through: "rolesRef",
+// })
+
+// Role.belongsToMany(Project, {
+//     through: "rolesRef",
+// })
+
+// Project.belongsToMany(Role, {
+//     through: "rolesRef",
+// })
+
+// Project.belongsToMany(User, {
+//     through: "rolesRef"
+// })
+
+// User.belongsToMany(Task, {
+//     through: 'projectRef'
+// })
+
+// Task.belongsToMany(User, {
+//     through: 'projectRef'
+// })
 
 module.exports = {
     User,

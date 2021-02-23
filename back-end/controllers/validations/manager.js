@@ -14,6 +14,14 @@ let validate = {
             errors.emptyType = "Type of task cannot be empty";
 
         return errors;
+    },
+
+    role: (object) => {
+        let errors = {};
+        if (!object.userId || !object.roleId || !object.projectId)
+            errors.emptyFields = "Make sure you complete all the fields"
+
+        return errors;
     }
 
 }
