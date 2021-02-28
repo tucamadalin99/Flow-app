@@ -62,7 +62,10 @@ const controller = {
         } else {
             return res.status(400).send(errors);
         }
-    }
+    },
+
 }
+
+
 
 module.exports = controller;

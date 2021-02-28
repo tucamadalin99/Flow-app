@@ -6,6 +6,7 @@ const middleware = require('../controllers/middleware');
 
 ///GET REGION
 
+router.get('/profile', middleware.checkNotAuth, userController.getProfile);
 
 ///////////////
 
@@ -15,14 +16,18 @@ router.post('/register', userController.register);
 router.post('/login', middleware.checkAuth, userController.login);
 
 router.post('/assignTask', middleware.checkNotAuth, userController.assignSelfToTask);
+
 ///////////////
 
 ///PUT REGION
 router.put('/updateInfo', middleware.checkNotAuth, userController.updateUser);
 
+router.put('/markResolved/:taskId', middleware.checkNotAuth, userController.markResolvedTask);
+
 
 //////////////
 router.delete('/logout', middleware.checkNotAuth, userController.logout);
+router.delete('/resignTask', middleware.checkNotAuth, userController.resignSelfFromTask);
 
 
 
