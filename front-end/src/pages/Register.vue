@@ -218,6 +218,7 @@ export default {
   methods: {
     onSubmit() {
       let depId = 0;
+      console.log("HEEEI");
       if (this.department === "Sales") depId = 1;
       else if (this.department === "Public Relations") depId = 2;
       else if (this.department === "Human Resources") depId = 3;
@@ -243,14 +244,14 @@ export default {
       refs.facebook.validate();
       refs.git.validate();
       if (
-        refs.name.hasError ||
-        refs.surname.hasError ||
-        refs.division.hasError ||
-        refs.role.hasError ||
-        refs.email.hasError ||
-        refs.password.hasError ||
-        refs.facebook.hasError ||
-        refs.git.hasError
+        !refs.name.hasError &&
+        !refs.surname.hasError &&
+        !refs.division.hasError &&
+        !refs.role.hasError &&
+        !refs.email.hasError &&
+        !refs.password.hasError &&
+        !refs.facebook.hasError &&
+        !refs.git.hasError
       )
         Axios.post("http://localhost:8081/api/user/register", user)
           .then(() => {

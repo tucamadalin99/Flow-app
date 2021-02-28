@@ -18,7 +18,7 @@
             <p class="details">Name</p>
             <q-input
               dense
-              v-model="user.fullName"
+              v-model="getUser.fullName"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -29,7 +29,7 @@
             <p class="details">Department</p>
             <q-input
               dense
-              v-model="user.department"
+              v-model="getUser.department"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -40,7 +40,7 @@
             <p class="details">Division</p>
             <q-input
               dense
-              v-model="user.division"
+              v-model="getUser.division"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -51,7 +51,7 @@
             <p class="details">Position</p>
             <q-input
               dense
-              v-model="user.role"
+              v-model="getUser.role"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -62,7 +62,7 @@
             <p class="details">Facebook</p>
             <q-input
               dense
-              v-model="user.facebook"
+              v-model="getUser.facebook"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -73,7 +73,7 @@
             <p class="details">Git</p>
             <q-input
               dense
-              v-model="user.git"
+              v-model="getUser.git"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -85,7 +85,12 @@
 
           <q-card-actions align="right" class="text-primary">
             <q-btn flat label="Cancel" v-close-popup />
-            <q-btn flat label="Save changes" v-close-popup />
+            <q-btn
+              @click="handleUpdate"
+              flat
+              label="Save changes"
+              v-close-popup
+            />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -115,7 +120,7 @@
           :elementValue="getUser.department"
         ></chip>
         <chip :elementName="`Divizie`" :elementValue="getUser.division"></chip>
-        <chip :elementName="`Pozitie`" :elementValue="this.user.role"></chip>
+        <chip :elementName="`Pozitie`" :elementValue="getUser.role"></chip>
         <chip :elementName="`Facebook`" :elementValue="getUser.facebook"></chip>
         <chip :elementName="`Git`" :elementValue="getUser.git"></chip>
       </q-list>
@@ -127,6 +132,7 @@
 import chip from "../components/Chip";
 import { ParticlesBg } from "particles-bg-vue";
 import { mapGetters, mapActions } from "vuex";
+import Axios from "axios";
 export default {
   name: "AccountPage",
   data() {
@@ -147,6 +153,36 @@ export default {
       if (!this.prompt) {
         this.prompt = true;
       }
+    },
+    handleUpdate: function () {
+      const names = this.getUser.fullName.split(" ");
+      const updatedUser = {
+        name: names[0],
+        surname: names[1],
+        division: this.getUser.division,
+        role: this.getUser.role,
+        facebook: this.getUser.facebook,
+        git: this.getUser.git,
+      };
+      Axios.put("http://localhost:8081/api/user/updateInfo", updatedUser, {
+        withCredentials: true,
+      })
+        .then(() => {
+          this.$q.notify({
+            color: "indigo-8",
+            textColor: "white",
+            icon: "cloud_done",
+            message: `User info updated succesfully!`,
+          });
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: "red-5",
+            textColor: "white",
+            icon: "error",
+            message: `An error occured`,
+          });
+        });
     },
     ...mapActions(["fetchUser"]),
   },
