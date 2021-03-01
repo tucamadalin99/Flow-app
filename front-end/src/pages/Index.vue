@@ -23,8 +23,8 @@ export default {
   },
 
   created() {
-    this.fetchUser();
-    this.fetchUsers();
+    // this.fetchUser();
+    // this.fetchUsers();
   },
 };
 </script>

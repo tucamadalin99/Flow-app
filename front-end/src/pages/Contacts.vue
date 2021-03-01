@@ -82,7 +82,7 @@
                       color="grey-8"
                       v-close-popup
                     ></q-btn>
-                    <div class="text-h6">Update Item</div>
+                    <div class="text-h6">Update User</div>
                   </q-card-section>
                   <q-separator inset></q-separator>
                   <q-card-section class="q-pt-none">
@@ -151,12 +151,18 @@
                         <q-item>
                           <q-item-section>
                             <q-item-label class="q-pb-xs"
-                              >Status:Active/Disable</q-item-label
+                              >Status:Active/Inactive</q-item-label
                             >
-                            <q-input
+                            <!-- <q-input
                               dense
                               outlined
                               v-model="editedItem.status"
+                            /> -->
+                            <q-select
+                              outlined
+                              v-model="editedItem.status"
+                              :options="['Active', 'Inactive']"
+                              label="Current Status"
                             />
                           </q-item-section>
                         </q-item>
@@ -192,10 +198,10 @@
               <q-chip
                 :color="
                   props.row.status == 'Active'
-                    ? 'green'
-                    : props.row.status == 'Disable'
-                    ? 'red'
-                    : 'grey'
+                    ? 'green-8'
+                    : props.row.status == 'Inactive'
+                    ? 'red-8'
+                    : 'orange-8'
                 "
                 text-color="white"
                 dense
@@ -261,10 +267,10 @@
                         v-if="col.name === 'status'"
                         :color="
                           props.row.status == 'Active'
-                            ? 'green'
-                            : props.row.status == 'Disable'
-                            ? 'red'
-                            : 'grey'
+                            ? 'green-8'
+                            : props.row.status == 'Inactive'
+                            ? 'red-8'
+                            : 'orange-8'
                         "
                         text-color="white"
                         dense
@@ -397,68 +403,7 @@ export default {
           field: "action",
         },
       ],
-      userData: [
-        {
-          name: "Malaysian Rinngit",
-          department: "IT",
-          email: "MYR@gmail.com",
-          phone: "07239919930",
-          role: "4.19",
-          facebook: "RM",
-          git: "Git",
-          status: "Active",
-        },
-        {
-          name: "Singapore Dollar",
-          department: "IT",
-          email: "SGD@gmail.com",
-          phone: "07239919930",
-          role: "x.xx",
-          facebook: "$",
-          git: "Git",
-          status: "Active",
-        },
-        {
-          name: "Chinese Yuan",
-          department: "IT",
-          email: "CNY@gmail.com",
-          phone: "07239919930",
-          role: "x.xx",
-          facebook: "¥",
-          git: "Git",
-          status: "Active",
-        },
-        {
-          name: "Malaysian Rinngit",
-          department: "IT",
-          email: "MYR@gmail.com",
-          phone: "07239919930",
-          role: "4.19",
-          facebook: "RM",
-          git: "Git",
-          status: "Active",
-        },
-        {
-          name: "Singapore Dollar",
-          department: "IT",
-          email: "SGD@gmail.com",
-          phone: "07239919930",
-          role: "x.xx",
-          facebook: "$",
-          git: "Git",
-          status: "Active",
-        },
-        {
-          name: "Chinese Yuan",
-          department: "IT",
-          email: "CNY@gmail.com",
-          phone: "07239919930",
-          role: "x.xx",
-          facebook: "¥",
-          git: "Git",
-          status: "Active",
-        },
-      ],
+      userData: [],
       pagination: {
         page: 1,
       },
@@ -531,6 +476,9 @@ export default {
         message: `Item '${this.editedItem.name}' updated.`,
         timeout: 500,
       });
+    },
+    onStatusClick() {
+      console.log("clicked");
     },
     ...mapActions(["fetchUsers"]),
   },
