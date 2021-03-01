@@ -114,15 +114,25 @@
     </div>
     <div class="account-info">
       <q-list>
-        <chip :elementName="`Nume`" :elementValue="getUser.fullName"></chip>
+        <chip
+          :elementName="`Nume`"
+          :elementValue="this.user.fullName"
+          :value="this.user.fullName"
+        ></chip>
         <chip
           :elementName="`Departament`"
-          :elementValue="getUser.department"
+          :elementValue="this.user.department"
         ></chip>
-        <chip :elementName="`Divizie`" :elementValue="getUser.division"></chip>
-        <chip :elementName="`Pozitie`" :elementValue="getUser.role"></chip>
-        <chip :elementName="`Facebook`" :elementValue="getUser.facebook"></chip>
-        <chip :elementName="`Git`" :elementValue="getUser.git"></chip>
+        <chip
+          :elementName="`Divizie`"
+          :elementValue="this.user.division"
+        ></chip>
+        <chip :elementName="`Pozitie`" :elementValue="this.user.role"></chip>
+        <chip
+          :elementName="`Facebook`"
+          :elementValue="this.user.facebook"
+        ></chip>
+        <chip :elementName="`Git`" :elementValue="this.user.git"></chip>
       </q-list>
     </div>
   </div>
@@ -155,14 +165,14 @@ export default {
       }
     },
     handleUpdate: function () {
-      const names = this.getUser.fullName.split(" ");
+      const names = this.user.fullName.split(" ");
       const updatedUser = {
         name: names[0],
         surname: names[1],
-        division: this.getUser.division,
-        role: this.getUser.role,
-        facebook: this.getUser.facebook,
-        git: this.getUser.git,
+        division: this.user.division,
+        role: this.user.role,
+        facebook: this.user.facebook,
+        git: this.user.git,
       };
       Axios.put("http://localhost:8081/api/user/updateInfo", updatedUser, {
         withCredentials: true,
@@ -191,9 +201,8 @@ export default {
   created() {
     console.log("before create");
     // console.log(this.user);
-    this.fetchUser();
+    // this.fetchUser();
     this.user = this.getUser;
-    console.log(this.user);
   },
 };
 </script>

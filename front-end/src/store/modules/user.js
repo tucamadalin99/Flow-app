@@ -19,7 +19,6 @@ const getters = {
 const actions = {
     async fetchUser({ commit }) {
         const response = await Axios.get('http://localhost:8081/api/user/profile', { withCredentials: true });
-        console.log(response);
         commit('setUser', response.data);
     }
 };

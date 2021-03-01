@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import user from './modules/user';
+import users from './modules/users';
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
@@ -12,9 +14,14 @@ Vue.use(Vuex);
 export default function ( /* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
-      user
+      user,
+      users
     },
-
+    plugins: [
+      createPersistedState({
+        storage: window.sessionStorage
+      })
+    ],
     // enable strict mode (adds overhead!)
     // for dev mode only
     strict: process.env.DEV

@@ -1,5 +1,5 @@
 <template>
-    <div class="q-pa-md">
+  <div class="q-pa-md">
     <div class="row q-col-gutter-sm">
       <!-- <div class="col">
         <q-table
@@ -25,7 +25,7 @@
           title="Contacts"
           :data="userData"
           :hide-header="mode === 'grid'"
-          :columns="currencyColumns"
+          :columns="usersColumns"
           row-key="__index"
           :grid="mode == 'grid'"
           :filter="filter"
@@ -65,13 +65,23 @@
               :icon="mode === 'grid' ? 'list' : 'grid_on'"
               @click="mode = mode === 'grid' ? 'list' : 'grid'"
             >
-              <q-tooltip :disable="$q.platform.is.mobile" v-close-popup>{{mode === "grid" ? "List" : "Grid"}}</q-tooltip>
+              <q-tooltip :disable="$q.platform.is.mobile" v-close-popup>{{
+                mode === "grid" ? "List" : "Grid"
+              }}</q-tooltip>
             </q-btn>
             <div class="q-pa-sm q-gutter-sm">
               <q-dialog v-model="show_dialog">
                 <q-card style="width: 600px; max-width: 60vw">
                   <q-card-section>
-                    <q-btn round flat dense icon="close" class="float-right" color="grey-8" v-close-popup></q-btn>
+                    <q-btn
+                      round
+                      flat
+                      dense
+                      icon="close"
+                      class="float-right"
+                      color="grey-8"
+                      v-close-popup
+                    ></q-btn>
                     <div class="text-h6">Update Item</div>
                   </q-card-section>
                   <q-separator inset></q-separator>
@@ -87,37 +97,67 @@
                         <q-item>
                           <q-item-section>
                             <q-item-label class="q-pb-xs">Email</q-item-label>
-                            <q-input dense outlined v-model="editedItem.email" />
+                            <q-input
+                              dense
+                              outlined
+                              v-model="editedItem.email"
+                            />
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
                             <q-item-label class="q-pb-xs">Phone</q-item-label>
-                            <q-input dense outlined v-model="editedItem.phone" />
+                            <q-input
+                              dense
+                              outlined
+                              v-model="editedItem.phone"
+                            />
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
-                            <q-item-label class="q-pb-xs">Spot</q-item-label>
-                            <q-input dense outlined v-model="editedItem.spotRate" />
+                            <q-item-label class="q-pb-xs">Role</q-item-label>
+                            <q-input dense outlined v-model="editedItem.role" />
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
-                            <q-item-label class="q-pb-xs">Sell</q-item-label>
-                            <q-input dense outlined v-model="editedItem.phone" />
+                            <q-item-label class="q-pb-xs">Phone</q-item-label>
+                            <q-input
+                              dense
+                              outlined
+                              v-model="editedItem.phone"
+                            />
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
-                            <q-item-label class="q-pb-xs">Symbol</q-item-label>
-                            <q-input dense outlined v-model="editedItem.symbol" />
+                            <q-item-label class="q-pb-xs"
+                              >Facebook</q-item-label
+                            >
+                            <q-input
+                              dense
+                              outlined
+                              v-model="editedItem.facebook"
+                            />
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
-                            <q-item-label class="q-pb-xs">Status:Active/Disable</q-item-label>
-                            <q-input dense outlined v-model="editedItem.status" />
+                            <q-item-label class="q-pb-xs">Git</q-item-label>
+                            <q-input dense outlined v-model="editedItem.git" />
+                          </q-item-section>
+                        </q-item>
+                        <q-item>
+                          <q-item-section>
+                            <q-item-label class="q-pb-xs"
+                              >Status:Active/Disable</q-item-label
+                            >
+                            <q-input
+                              dense
+                              outlined
+                              v-model="editedItem.status"
+                            />
                           </q-item-section>
                         </q-item>
                       </q-list>
@@ -146,25 +186,40 @@
               </q-dialog>
             </div>
           </template>
-          
+
           <template #body-cell-status="props">
             <q-td :props="props">
-                <q-chip
-                  :color="props.row.status == 'Active' ? 'green': props.row.status == 'Disable' ? 'red': 'grey'"
-                  text-color="white"
-                  dense
-                  class="text-weight-bolder"
-                  square
-                >{{props.row[props.col.name]}}</q-chip>
+              <q-chip
+                :color="
+                  props.row.status == 'Active'
+                    ? 'green'
+                    : props.row.status == 'Disable'
+                    ? 'red'
+                    : 'grey'
+                "
+                text-color="white"
+                dense
+                class="text-weight-bolder"
+                square
+                >{{ props.row[props.col.name] }}</q-chip
+              >
             </q-td>
           </template>
           <template #body-cell-action="props">
             <q-td>
-              <q-btn dense flat round color="blue" field="edit" icon="person" @click="editItem(props.row)"></q-btn>
-              </q-td>
+              <q-btn
+                dense
+                flat
+                round
+                color="blue"
+                field="edit"
+                icon="person"
+                @click="editItem(props.row)"
+              ></q-btn>
+            </q-td>
           </template>
-          
-<!--           <template v-slot:bottom>
+
+          <!--           <template v-slot:bottom>
             <div class="pagination-total q-mt-sm flex flex-center">
               <div class="text-medium-regular">
                 Total {{ userData.length }}
@@ -191,7 +246,7 @@
               :style="props.selected ? 'transform: scale(0.95);' : ''"
             >
               <q-card :class="props.selected ? 'bg-grey-2' : ''">
-    <!--             <q-card-section>
+                <!--             <q-card-section>
                   <q-checkbox dense v-model="props.selected" :label="props.row.name"></q-checkbox>
                   {{props.row.name}}
                 </q-card-section>
@@ -202,15 +257,36 @@
                       <q-item-label>{{ col.label }}</q-item-label>
                     </q-item-section>
                     <q-item-section side>
-                      <q-chip v-if="col.name === 'status'"
-                        :color="props.row.status == 'Active' ? 'green': props.row.status == 'Disable' ? 'red': 'grey'"
+                      <q-chip
+                        v-if="col.name === 'status'"
+                        :color="
+                          props.row.status == 'Active'
+                            ? 'green'
+                            : props.row.status == 'Disable'
+                            ? 'red'
+                            : 'grey'
+                        "
                         text-color="white"
                         dense
                         class="text-weight-bolder"
                         square
-                      >{{col.value}}</q-chip>
-                      <q-btn v-else-if="col.name === 'action'" dense flat color="primary" field="edit" icon="person" @click="editItem(props.row)" ></q-btn>
-                      <q-item-label v-else caption :class="col.classes ? col.classes : ''">{{ col.value }}</q-item-label>
+                        >{{ col.value }}</q-chip
+                      >
+                      <q-btn
+                        v-else-if="col.name === 'action'"
+                        dense
+                        flat
+                        color="primary"
+                        field="edit"
+                        icon="person"
+                        @click="editItem(props.row)"
+                      ></q-btn>
+                      <q-item-label
+                        v-else
+                        caption
+                        :class="col.classes ? col.classes : ''"
+                        >{{ col.value }}</q-item-label
+                      >
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -224,8 +300,9 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
-  data () {
+  data() {
     return {
       inFs: false,
       columns: [
@@ -234,9 +311,8 @@ export default {
         // { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
         // { name: 'protein', label: 'Protein (g)', field: 'protein' },
         // { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        
       ],
-    
+
       noti: () => {},
       show_dialog: false,
       editedIndex: -1,
@@ -244,45 +320,45 @@ export default {
         name: "",
         email: "",
         phone: "",
-        spotRate: "",
+        role: "",
         phone: "",
-        symbol: "",
-        status: ""
+        facebook: "",
+        status: "",
       },
       defaultItem: {
         name: "",
         email: "",
         phone: "",
-        spotRate: "",
+        role: "",
         phone: "",
-        symbol: "",
-        status: ""
+        facebook: "",
+        status: "",
       },
       filter: "",
       mode: "list",
-      currencyColumns: [
+      usersColumns: [
         {
           name: "name",
           align: "left",
           label: "Name",
           field: "name",
-          sortable: true
+          sortable: true,
         },
-        // {
-        //   name: "email",
-        //   required: true,
-        //   label: "email",
-        //   align: "left",
-        //   field: "email",
-        //   sortable: true
-        // },
+        {
+          name: "department",
+          required: true,
+          label: "Department",
+          align: "center",
+          field: "department",
+          sortable: true,
+        },
         {
           name: "email",
           align: "center",
           label: "Email",
           field: "email",
           sortable: true,
-          classes: 'text-green email'
+          classes: "text-green email",
         },
         // {
         //   name: "spotRate",
@@ -293,18 +369,18 @@ export default {
         // },
         {
           name: "phone",
-          align: "left",
+          align: "center",
           label: "Phone",
           field: "phone",
           sortable: true,
-          classes: 'text-green'
+          classes: "text-green",
         },
         // {
-        //   name: "symbol",
+        //   name: "facebook",
         //   align: "center",
         //   labelalign: "left",
-        //   label: "Symbol",
-        //   field: "symbol",
+        //   label: "facebook",
+        //   field: "facebook",
         //   sortable: true
         // },
         {
@@ -312,65 +388,76 @@ export default {
           align: "center",
           label: "Status",
           field: "status",
-          sortable: true
+          sortable: true,
         },
-         {
+        {
           name: "action",
           align: "left",
           label: "Profile",
-          field: "action"
-        }
+          field: "action",
+        },
       ],
       userData: [
         {
           name: "Malaysian Rinngit",
+          department: "IT",
           email: "MYR@gmail.com",
           phone: "07239919930",
-          spotRate: "4.19",
-          symbol: "RM",
-          status: "Active"
+          role: "4.19",
+          facebook: "RM",
+          git: "Git",
+          status: "Active",
         },
         {
           name: "Singapore Dollar",
+          department: "IT",
           email: "SGD@gmail.com",
           phone: "07239919930",
-          spotRate: "x.xx",
-          symbol: "$",
-          status: "Active"
+          role: "x.xx",
+          facebook: "$",
+          git: "Git",
+          status: "Active",
         },
         {
           name: "Chinese Yuan",
+          department: "IT",
           email: "CNY@gmail.com",
           phone: "07239919930",
-          spotRate: "x.xx",
-
-          symbol: "¥",
-          status: "Active"
+          role: "x.xx",
+          facebook: "¥",
+          git: "Git",
+          status: "Active",
         },
         {
           name: "Malaysian Rinngit",
+          department: "IT",
           email: "MYR@gmail.com",
           phone: "07239919930",
-          spotRate: "4.19",
-          symbol: "RM",
-          status: "Active"
+          role: "4.19",
+          facebook: "RM",
+          git: "Git",
+          status: "Active",
         },
         {
           name: "Singapore Dollar",
+          department: "IT",
           email: "SGD@gmail.com",
           phone: "07239919930",
-          spotRate: "x.xx",
-          symbol: "$",
-          status: "Active"
+          role: "x.xx",
+          facebook: "$",
+          git: "Git",
+          status: "Active",
         },
         {
           name: "Chinese Yuan",
+          department: "IT",
           email: "CNY@gmail.com",
           phone: "07239919930",
-          spotRate: "x.xx",
-          symbol: "¥",
-          status: "Active"
-        }
+          role: "x.xx",
+          facebook: "¥",
+          git: "Git",
+          status: "Active",
+        },
       ],
       pagination: {
         page: 1,
@@ -378,29 +465,33 @@ export default {
       page: 1,
       totalRecord: 0,
       pageCount: 1,
-    }
+    };
   },
   methods: {
     editRow(props) {
-      this.noti()
+      this.noti();
       // do something
       this.noti = this.$q.notify({
-        type: 'info',
-        textColor: 'grey-10',
+        type: "info",
+        textColor: "grey-10",
         multiLine: true,
-        message: `I'll edit row data => ${JSON.stringify(props.row).split(',').join(', ')}`,
-        timeout: 2000
-      })
+        message: `I'll edit row data => ${JSON.stringify(props.row)
+          .split(",")
+          .join(", ")}`,
+        timeout: 2000,
+      });
     },
-    deleteRow(props){
-      this.noti()
+    deleteRow(props) {
+      this.noti();
       // do something
       this.noti = this.$q.notify({
-        type: 'negative',
+        type: "negative",
         multiline: true,
-        message: `I'll delete row data => ${JSON.stringify(props.row).split(',').join(', ')}`,
-        timeout: 2000
-      })
+        message: `I'll delete row data => ${JSON.stringify(props.row)
+          .split(",")
+          .join(", ")}`,
+        timeout: 2000,
+      });
     },
     addRow() {
       if (this.editedIndex > -1) {
@@ -408,7 +499,7 @@ export default {
       } else {
         this.userData.push(this.editedItem);
       }
-      this.close()
+      this.close();
     },
     deleteItem(item) {
       const index = this.userData.indexOf(item);
@@ -416,39 +507,53 @@ export default {
         this.userData.splice(index, 1);
     },
     editItem(item) {
-      this.editedIndex = this.userData.findIndex((v, i) =>v.__index === item.__index)
+      this.editedIndex = this.userData.findIndex(
+        (v, i) => v.__index === item.__index
+      );
       this.editedItem = Object.assign({}, item);
       this.show_dialog = true;
     },
-    close () {
-      this.show_dialog = false
+    close() {
+      this.show_dialog = false;
       setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      }, 300);
     },
-    setFs(props){
-      props.toggleFullscreen()
-      this.inFs = props.inFullscreen
+    setFs(props) {
+      props.toggleFullscreen();
+      this.inFs = props.inFullscreen;
     },
     updateRow() {
-      this.userData.splice(this.editedIndex, 1, this.editedItem)
-      this.$q.notify({type:"positive", message: `Item '${this.editedItem.name}' updated.`, timeout: 500 })
-    }
+      this.userData.splice(this.editedIndex, 1, this.editedItem);
+      this.$q.notify({
+        type: "positive",
+        message: `Item '${this.editedItem.name}' updated.`,
+        timeout: 500,
+      });
+    },
+    ...mapActions(["fetchUsers"]),
+  },
+  computed: mapGetters(["getUsers"]),
+  created() {
+    this.fetchUsers();
+    //console.log("getter", this.getUsers);
+    //console.log("morti", this.getUsers);
+    this.userData = this.getUsers;
+    //console.log(this.getUsers);
   },
   mounted() {
     // add indices
-    this.userData = this.userData.map((v, i) => ({ ...v, __index: i}))
-  }
-}    
-    
+    this.userData = this.userData.map((v, i) => ({ ...v, __index: i }));
+  },
+};
 </script>
 
 <style scoped>
-.email:hover{
-    background-color:lightcoral;
+.email:hover {
+  background-color: lightcoral;
 }
-td:hover{
-    color:lightcoral;
+td:hover {
+  color: lightcoral;
 }
 </style>

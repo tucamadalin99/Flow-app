@@ -35,17 +35,15 @@
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
           </q-avatar>
-          <div class="text-weight-bold">Simplu SiSCot</div>
-          <div>@siscot@gmail.com</div>
+          <div class="text-weight-bold">{{ getUser.fullName }}</div>
+          <div>{{ getUser.email }}</div>
         </div>
       </q-img>
       <q-scroll-area
         style="height: calc(100% - 150px); border-right: 1px solid #ddd"
       >
         <q-list>
-          <q-item-label header class="text-grey-8">
-            Manage
-          </q-item-label>
+          <q-item-label header class="text-grey-8"> Manage </q-item-label>
           <!-- <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
@@ -86,9 +84,7 @@
               <q-item-label>Tasks</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item-label header class="text-grey-8">
-            Contact
-          </q-item-label>
+          <q-item-label header class="text-grey-8"> Contact </q-item-label>
 
           <q-item clickable exact to="/contacts">
             <q-item-section avatar>
@@ -108,9 +104,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item-label header class="text-grey-8">
-            Account
-          </q-item-label>
+          <q-item-label header class="text-grey-8"> Account </q-item-label>
 
           <q-item clickable exact to="/changePass">
             <q-item-section avatar>
@@ -140,6 +134,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
   name: "MainLayout",
   // components: { EssentialLink },
@@ -147,17 +142,21 @@ export default {
     return {
       leftDrawerOpen: false,
       // essentialLinks: linksData,
-      dark: false
+      dark: false,
     };
   },
   methods: {
-    darkMode: function() {
+    darkMode: function () {
       this.$q.dark.toggle(this.dark);
-    }
-  }
-  // created() {
-  //   this.$q.dark.toggle(true);
-  // }
+    },
+    ...mapActions(["fetchUser", "fetchUsers"]),
+  },
+  computed: mapGetters(["getUser"]),
+  created() {
+    // this.$q.dark.toggle(true);
+    this.fetchUser();
+    this.fetchUsers();
+  },
 };
 </script>
 <style scoped>
