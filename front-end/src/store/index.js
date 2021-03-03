@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import user from './modules/user';
 import users from './modules/users';
+import userActivity from './modules/userActivity'
 import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
@@ -15,7 +16,8 @@ export default function ( /* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       user,
-      users
+      users,
+      userActivity
     },
     plugins: [
       createPersistedState({

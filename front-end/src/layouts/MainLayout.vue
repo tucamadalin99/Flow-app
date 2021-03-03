@@ -149,13 +149,14 @@ export default {
     darkMode: function () {
       this.$q.dark.toggle(this.dark);
     },
-    ...mapActions(["fetchUser", "fetchUsers"]),
+    ...mapActions(["fetchUser", "fetchUsers", "fetchActivity"]),
   },
   computed: mapGetters(["getUser"]),
   created() {
     // this.$q.dark.toggle(true);
     this.fetchUser();
     this.fetchUsers();
+    this.fetchActivity();
   },
 };
 </script>

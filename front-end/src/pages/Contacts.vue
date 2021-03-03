@@ -82,7 +82,7 @@
                       color="grey-8"
                       v-close-popup
                     ></q-btn>
-                    <div class="text-h6">Update User</div>
+                    <div class="text-h6">Contact Profile</div>
                   </q-card-section>
                   <q-separator inset></q-separator>
                   <q-card-section class="q-pt-none">
@@ -91,43 +91,65 @@
                         <q-item>
                           <q-item-section>
                             <q-item-label class="q-pb-xs">Name</q-item-label>
-                            <q-input dense outlined v-model="editedItem.name" />
+                            <!-- <q-input dense outlined v-model="editedItem.name" /> -->
+                            <q-chip
+                              color="primary"
+                              text-color="white"
+                              icon="person"
+                              size="18px"
+                            >
+                              {{ editedItem.name }}
+                            </q-chip>
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
                             <q-item-label class="q-pb-xs">Email</q-item-label>
-                            <q-input
+                            <!-- <q-input
                               dense
                               outlined
                               v-model="editedItem.email"
-                            />
+                            /> -->
+                            <q-chip
+                              color="primary"
+                              text-color="white"
+                              icon="email"
+                              size="18px"
+                            >
+                              {{ editedItem.email }}
+                            </q-chip>
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
                             <q-item-label class="q-pb-xs">Phone</q-item-label>
-                            <q-input
+                            <!-- <q-input
                               dense
                               outlined
                               v-model="editedItem.phone"
-                            />
+                            /> -->
+                            <q-chip
+                              color="primary"
+                              text-color="white"
+                              icon="phone"
+                              size="18px"
+                            >
+                              {{ editedItem.phone }}
+                            </q-chip>
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
                             <q-item-label class="q-pb-xs">Role</q-item-label>
-                            <q-input dense outlined v-model="editedItem.role" />
-                          </q-item-section>
-                        </q-item>
-                        <q-item>
-                          <q-item-section>
-                            <q-item-label class="q-pb-xs">Phone</q-item-label>
-                            <q-input
-                              dense
-                              outlined
-                              v-model="editedItem.phone"
-                            />
+                            <!-- <q-input dense outlined v-model="editedItem.role" /> -->
+                            <q-chip
+                              color="primary"
+                              text-color="white"
+                              icon="work"
+                              size="18px"
+                            >
+                              {{ editedItem.role }}
+                            </q-chip>
                           </q-item-section>
                         </q-item>
                         <q-item>
@@ -135,20 +157,36 @@
                             <q-item-label class="q-pb-xs"
                               >Facebook</q-item-label
                             >
-                            <q-input
+                            <!-- <q-input
                               dense
                               outlined
                               v-model="editedItem.facebook"
-                            />
+                            /> -->
+                            <q-chip
+                              color="primary"
+                              text-color="white"
+                              icon="facebook"
+                              size="18px"
+                            >
+                              {{ editedItem.facebook }}
+                            </q-chip>
                           </q-item-section>
                         </q-item>
                         <q-item>
                           <q-item-section>
                             <q-item-label class="q-pb-xs">Git</q-item-label>
-                            <q-input dense outlined v-model="editedItem.git" />
+                            <!-- <q-input dense outlined v-model="editedItem.git" /> -->
+                            <q-chip
+                              color="primary"
+                              text-color="white"
+                              icon="account_tree"
+                              size="18px"
+                            >
+                              {{ editedItem.git }}
+                            </q-chip>
                           </q-item-section>
                         </q-item>
-                        <q-item>
+                        <q-item v-if="statusChangePermission">
                           <q-item-section>
                             <q-item-label class="q-pb-xs"
                               >Status:Active/Inactive</q-item-label
@@ -179,6 +217,7 @@
                         v-close-popup
                       ></q-btn>
                       <q-btn
+                        v-if="statusChangePermission"
                         flat
                         label="OK"
                         color="primary"
@@ -310,6 +349,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
+      statusChangePermission: false,
       inFs: false,
       columns: [
         // { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
@@ -482,10 +522,14 @@ export default {
     },
     ...mapActions(["fetchUsers"]),
   },
-  computed: mapGetters(["getUsers"]),
+  computed: mapGetters(["getUsers", "getUser"]),
   created() {
-    this.fetchUsers();
-    //console.log("getter", this.getUsers);
+    //this.fetchUsers();
+    const currentUser = this.getUser;
+    if (currentUser.isManager || currentUser.isCEO) {
+      this.statusChangePermission = true;
+    }
+    console.log("getter", this.statusChangePermission);
     //console.log("morti", this.getUsers);
     this.userData = this.getUsers;
     //console.log(this.getUsers);
@@ -498,10 +542,17 @@ export default {
 </script>
 
 <style scoped>
-.email:hover {
+/* .email:hover {
   background-color: lightcoral;
-}
+} */
 td:hover {
   color: lightcoral;
+}
+
+.col-xs-12 {
+  background: #2d6cb5;
+  margin-left: 5%;
+  margin-top: 2%;
+  border-radius: 2%;
 }
 </style>

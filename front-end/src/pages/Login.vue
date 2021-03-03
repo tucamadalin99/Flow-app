@@ -22,10 +22,10 @@
           lazy-rules
           :rules="[
             (val) => (val && val.length > 0) || 'Cannot be empty',
-            (val) =>
-              (val &&
-                val.match(/^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$/)) ||
-              'Invalid email',
+            //(val) =>
+            //  (val &&
+            //val.match(/^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$/)) ||
+            // 'Invalid email',
           ]"
         >
           <template v-slot:prepend>
