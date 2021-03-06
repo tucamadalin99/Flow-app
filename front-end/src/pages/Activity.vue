@@ -4,12 +4,9 @@
     <div class="row activity">
       <activityCard
         v-for="activity in activities"
-        :key="activity.taskName"
-        :projectName="activity.project"
-        :taskName="activity.taskName"
-        :startDate="activity.startDate"
-        :endDate="activity.endDate"
-        :status="activity.status"
+        :key="activity.id"
+        :projectName="activity.name"
+        :tasks="activity.tasks"
       >
       </activityCard>
     </div>
@@ -42,5 +39,8 @@ h2 {
 .activity {
   justify-content: center;
   z-index: 2;
+}
+.activity-container {
+  padding: 20px;
 }
 </style>

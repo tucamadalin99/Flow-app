@@ -2,8 +2,8 @@ import Axios from 'axios';
 
 const state = {
     activity: {
-
-    }
+    },
+    ok: false
 };
 
 const getters = {
@@ -13,18 +13,12 @@ const getters = {
 const actions = {
     async fetchActivity({ commit }) {
         const response = await Axios.get('http://localhost:8081/api/user/activity', { withCredentials: true });
-        let activityArray = [];
-        response.data.projectRefs.forEach(obj => {
-            let parsedActivity = {};
-            parsedActivity.project = obj.project.name;
-            parsedActivity.taskName = obj.task.name;
-            parsedActivity.startDate = obj.task.startDate;
-            parsedActivity.endDate = obj.task.endDate;
-            parsedActivity.status = obj.task.status;
-            activityArray.push(parsedActivity);
-        })
-        console.log(activityArray);
-        commit('setActivity', activityArray);
+        console.log(response.data);
+        commit('setActivity', response.data);
+        // Axios.get('http://localhost:8081/api/user/activity', { withCredentials: true }).then(response => {
+        //     console.log(response.data);
+        //     this.state.ok = true;
+        // })
     }
 };
 

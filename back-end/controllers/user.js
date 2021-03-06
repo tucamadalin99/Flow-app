@@ -2,6 +2,7 @@ const UserModel = require('../models').User;
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const ProjectRefModel = require('../models').ProjectRef;
+const ProjectModel = require('../models').Project;
 const TaskModel = require('../models').Task;
 const DepartmentModel = require('../models').Department;
 const validateUser = require('./validations/user');
@@ -61,7 +62,9 @@ const controller = {
                 email: currentUser.email,
                 role: currentUser.role,
                 facebook: currentUser.facebook,
-                git: currentUser.git
+                git: currentUser.git,
+                isManager: currentUser.isManager,
+                isCEO: currentUser.isCEO
             }
             res.status(200).send(user);
         } catch (err) {
@@ -143,6 +146,23 @@ const controller = {
             return res.status(500).send(err);
         }
 
+    },
+
+    getResolvedActivity: async (req, res) => {
+        const currentUser = await req.user;
+        // UserModel.findOne({ where: { id: currentUser.id }, include: { model: ProjectRefModel, include: { model: TaskModel, where: { status: "resolved" } }, include: ProjectModel } })
+        //     .then(user => res.status(200).send(user))
+        //     .catch(err => res.status(500).send(err));
+        const response = await UserModel.findOne({ where: { id: currentUser.id }, attributes: [], include: { model: ProjectRefModel, attributes: ['id'], include: [{ model: ProjectModel, attributes: ['id', 'name'] }, { model: TaskModel, where: { status: "resolved" } }] } })
+        let activityArray = {};
+        response.projectRefs.forEach(obj => {
+            activityArray[obj.project.id] = {};
+            activityArray[obj.project.id].name = obj.project.name;
+            activityArray[obj.project.id].tasks = [];
+
+        })
+        response.projectRefs.forEach(obj => activityArray[obj.project.id].tasks.push(obj.task));
+        return res.status(200).send(activityArray);
     }
 }
 
