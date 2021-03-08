@@ -150,19 +150,28 @@ const controller = {
 
     getResolvedActivity: async (req, res) => {
         const currentUser = await req.user;
-        // UserModel.findOne({ where: { id: currentUser.id }, include: { model: ProjectRefModel, include: { model: TaskModel, where: { status: "resolved" } }, include: ProjectModel } })
-        //     .then(user => res.status(200).send(user))
-        //     .catch(err => res.status(500).send(err));
-        const response = await UserModel.findOne({ where: { id: currentUser.id }, attributes: [], include: { model: ProjectRefModel, attributes: ['id'], include: [{ model: ProjectModel, attributes: ['id', 'name'] }, { model: TaskModel, where: { status: "resolved" } }] } })
-        let activityArray = {};
-        response.projectRefs.forEach(obj => {
-            activityArray[obj.project.id] = {};
-            activityArray[obj.project.id].name = obj.project.name;
-            activityArray[obj.project.id].tasks = [];
+        try {
+            const response = await UserModel.findOne({
+                where: { id: currentUser.id }, attributes: [],
+                include: {
+                    model: ProjectRefModel, attributes: ['id'],
+                    include: [{ model: ProjectModel, attributes: ['id', 'name'] },
+                    { model: TaskModel, where: { status: "resolved" } }]
+                }
+            })
+            let activityArray = {};
+            response.projectRefs.forEach(obj => {
+                activityArray[obj.project.id] = {};
+                activityArray[obj.project.id].name = obj.project.name;
+                activityArray[obj.project.id].tasks = [];
 
-        })
-        response.projectRefs.forEach(obj => activityArray[obj.project.id].tasks.push(obj.task));
-        return res.status(200).send(activityArray);
+            })
+            response.projectRefs.forEach(obj => activityArray[obj.project.id].tasks.push(obj.task));
+            return res.status(200).send(activityArray);
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+
     }
 }
 

@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser');
 const app = express();
 const PORT = 8081;
 const router = require('./routes');
@@ -48,7 +47,8 @@ app.use(
   })
 );
 
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cors(corsOptions));
 app.use(passport.initialize());
 app.use(passport.session());
