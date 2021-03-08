@@ -1,6 +1,7 @@
 <template>
   <div class="account-container">
     <particles-bg
+      class="particles"
       color="#2d6cb5"
       num="80"
       type="cobweb"
@@ -281,5 +282,10 @@ export default {
 }
 .q-list {
   margin-top: 5px;
+}
+@media only screen and (max-width: 600px) {
+  .particles {
+    display: none;
+  }
 }
 </style>

@@ -36,6 +36,7 @@
         >
           <template v-slot:top-right="props">
             <q-select
+              class="filters"
               @input="handleFilterStatus($event)"
               v-model="filteredStatusValue"
               dense
@@ -46,6 +47,7 @@
               label="Status"
             />
             <q-select
+              class="filters"
               @input="handleFilterDepartment($event)"
               v-model="filteredDepValue"
               dense
@@ -63,6 +65,7 @@
             />
 
             <q-input
+              class="filters"
               outlined
               dense
               debounce="300"
@@ -564,7 +567,6 @@ export default {
         value !== "All" &&
         (this.filteredStatusValue === "" || this.filteredStatusValue === "All")
       ) {
-        console.log("first 1");
         storedUsers.forEach((el) => {
           if (el.department === value) {
             filteredTable.push(el);
@@ -575,7 +577,6 @@ export default {
         value !== "All" &&
         (this.filteredStatusValue !== "" || this.filteredStatusValue !== "All")
       ) {
-        console.log("first 2");
         storedUsers.forEach((el) => {
           if (
             el.department === value &&
@@ -596,7 +597,6 @@ export default {
         value !== "All" &&
         (this.filteredDepValue === "" || this.filteredDepValue === "All")
       ) {
-        console.log("first");
         storedUsers.forEach((el) => {
           if (el.status === value) {
             filteredTable.push(el);
@@ -619,7 +619,6 @@ export default {
         this.filteredDepValue !== "All" &&
         this.filteredDepValue !== ""
       ) {
-        console.log("third");
         storedUsers.forEach((el) => {
           if (el.department === this.filteredDepValue) {
             filteredTable.push(el);
@@ -627,7 +626,6 @@ export default {
         });
         this.userData = filteredTable;
       } else {
-        console.log(storedUsers);
         this.userData = storedUsers;
       }
     },
@@ -661,8 +659,20 @@ td:hover {
 }
 
 .col-xs-12 {
-  margin-left: 5%;
+  margin-left: 6.1%;
   margin-top: 2%;
   border-radius: 2%;
+}
+
+@media only screen and (max-width: 600px) {
+  .filters {
+    margin: 2%;
+  }
+
+  .col-xs-12 {
+    margin-left: 0;
+    margin-top: 0;
+    border-radius: 0;
+  }
 }
 </style>
