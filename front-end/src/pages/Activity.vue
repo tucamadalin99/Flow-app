@@ -23,6 +23,7 @@
         :key="activity.id"
         :projectName="activity.name"
         :tasks="activity.tasks"
+        :logo="activity.logo"
       />
     </div>
   </div>

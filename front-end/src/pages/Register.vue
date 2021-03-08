@@ -4,7 +4,7 @@
       color="#ffffff"
       num="100"
       type="cobweb"
-      :canvas="{ backgroundColor: '#2E6CB5', height: '90rem' }"
+      :canvas="{ backgroundColor: '#2E6CB5', height: '96.5rem' }"
       :bg="true"
     />
     <div class="regDiv" style="max-width: 500px">
@@ -120,6 +120,24 @@
         </q-input>
 
         <q-input
+          ref="phone"
+          filled
+          v-model="phone"
+          type="text"
+          label="Phone Number"
+          lazy-rules
+          :rules="[
+            () => {
+              if (!nonEmpty) this.valid = false;
+            },
+          ]"
+        >
+          <template v-slot:prepend>
+            <q-icon name="phone"></q-icon>
+          </template>
+        </q-input>
+
+        <q-input
           ref="password"
           filled
           type="password"
@@ -206,6 +224,7 @@ export default {
       facebook: null,
       git: null,
       email: null,
+      phone: null,
       password: null,
       accept: false,
       valid: true,
@@ -229,6 +248,7 @@ export default {
         division: this.divizie,
         role: this.pozitie,
         email: this.email,
+        phone: this.phone,
         password: this.password,
         facebook: this.facebook,
         git: this.git,

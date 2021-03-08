@@ -115,7 +115,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable exact to="/login">
+          <q-item clickable @click="handleLogout">
             <q-item-section avatar>
               <q-icon name="ion-exit" />
             </q-item-section>
@@ -135,6 +135,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import Axios from "axios";
 export default {
   name: "MainLayout",
   // components: { EssentialLink },
@@ -148,6 +149,28 @@ export default {
   methods: {
     darkMode: function () {
       this.$q.dark.toggle(this.dark);
+    },
+    handleLogout: function () {
+      Axios.delete("http://localhost:8081/api/user/logout", {
+        withCredentials: true,
+      })
+        .then(() => {
+          this.$q.notify({
+            color: "indigo-8",
+            textColor: "white",
+            icon: "pan_tool",
+            message: `See you soon!`,
+          });
+          this.$router.push("/login");
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: "red-8",
+            textColor: "white",
+            icon: "error",
+            message: `There has been an error. Sorry...`,
+          });
+        });
     },
     ...mapActions(["fetchUser", "fetchUsers", "fetchActivity"]),
   },

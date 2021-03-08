@@ -17,6 +17,7 @@
           </template>
         </q-table>
       </div> -->
+
       <div class="col">
         <q-table
           flat
@@ -34,12 +35,39 @@
           :rows-per-page-options="[0]"
         >
           <template v-slot:top-right="props">
+            <q-select
+              @input="handleFilterStatus($event)"
+              v-model="filteredStatusValue"
+              dense
+              outlined
+              debounce
+              style="margin-right: 5px; width: 150px"
+              :options="['All', 'Active', 'Inactive', 'Junior']"
+              label="Status"
+            />
+            <q-select
+              @input="handleFilterDepartment($event)"
+              v-model="filteredDepValue"
+              dense
+              outlined
+              debounce
+              style="margin-right: 5px; width: 210px"
+              :options="[
+                'All',
+                'Human Resources',
+                'Information Technology',
+                'Public Relations',
+                'Sales',
+              ]"
+              label="Department"
+            />
+
             <q-input
               outlined
               dense
               debounce="300"
               v-model="filter"
-              placeholder="Search"
+              placeholder="Search by any field"
             >
               <template v-slot:append>
                 <q-icon name="search" />
@@ -358,6 +386,8 @@ export default {
         // { name: 'protein', label: 'Protein (g)', field: 'protein' },
         // { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
       ],
+      filteredDepValue: "",
+      filteredStatusValue: "",
 
       noti: () => {},
       show_dialog: false,
@@ -520,6 +550,87 @@ export default {
     onStatusClick() {
       console.log("clicked");
     },
+    handleFilterDepartment(value) {
+      let storedUsers = this.getUsers;
+      let filteredTable = [];
+      if (value === "All" && this.filteredStatusValue !== "All") {
+        storedUsers.forEach((el) => {
+          if (el.status === this.filteredStatusValue) {
+            filteredTable.push(el);
+          }
+        });
+        this.userData = filteredTable;
+      } else if (
+        value !== "All" &&
+        (this.filteredStatusValue === "" || this.filteredStatusValue === "All")
+      ) {
+        console.log("first 1");
+        storedUsers.forEach((el) => {
+          if (el.department === value) {
+            filteredTable.push(el);
+          }
+        });
+        this.userData = filteredTable;
+      } else if (
+        value !== "All" &&
+        (this.filteredStatusValue !== "" || this.filteredStatusValue !== "All")
+      ) {
+        console.log("first 2");
+        storedUsers.forEach((el) => {
+          if (
+            el.department === value &&
+            el.status === this.filteredStatusValue
+          ) {
+            filteredTable.push(el);
+          }
+        });
+        this.userData = filteredTable;
+      } else {
+        this.userData = storedUsers;
+      }
+    },
+    handleFilterStatus(value) {
+      let storedUsers = this.getUsers;
+      let filteredTable = [];
+      if (
+        value !== "All" &&
+        (this.filteredDepValue === "" || this.filteredDepValue === "All")
+      ) {
+        console.log("first");
+        storedUsers.forEach((el) => {
+          if (el.status === value) {
+            filteredTable.push(el);
+          }
+        });
+        this.userData = filteredTable;
+      } else if (
+        value !== "All" &&
+        (this.filteredDepValue !== "" || this.filteredDepValue !== "All")
+      ) {
+        console.log("second");
+        storedUsers.forEach((el) => {
+          if (el.status === value && el.department === this.filteredDepValue) {
+            filteredTable.push(el);
+          }
+        });
+        this.userData = filteredTable;
+      } else if (
+        value === "All" &&
+        this.filteredDepValue !== "All" &&
+        this.filteredDepValue !== ""
+      ) {
+        console.log("third");
+        storedUsers.forEach((el) => {
+          if (el.department === this.filteredDepValue) {
+            filteredTable.push(el);
+          }
+        });
+        this.userData = filteredTable;
+      } else {
+        console.log(storedUsers);
+        this.userData = storedUsers;
+      }
+    },
     ...mapActions(["fetchUsers"]),
   },
   computed: mapGetters(["getUsers", "getUser"]),
@@ -550,7 +661,6 @@ td:hover {
 }
 
 .col-xs-12 {
-  background: #2d6cb5;
   margin-left: 5%;
   margin-top: 2%;
   border-radius: 2%;

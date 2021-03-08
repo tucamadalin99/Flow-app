@@ -164,6 +164,14 @@ const controller = {
                 activityArray[obj.project.id] = {};
                 activityArray[obj.project.id].name = obj.project.name;
                 activityArray[obj.project.id].tasks = [];
+                if (activityArray[obj.project.id].name === "SpringIT")
+                    activityArray[obj.project.id].logo = "SpringIT.jpg"
+                else if (activityArray[obj.project.id].name === "Dare to Speak")
+                    activityArray[obj.project.id].logo = "DTS.png";
+                else if (activityArray[obj.project.id].name === "Tap That Job")
+                    activityArray[obj.project.id].logo = "TTJ.png";
+                else
+                    activityArray[obj.project.id].logo = "test.jpg";
 
             })
             response.projectRefs.forEach(obj => activityArray[obj.project.id].tasks.push(obj.task));

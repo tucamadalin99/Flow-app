@@ -1,10 +1,6 @@
 <template>
   <q-card class="activity-card">
-    <q-img
-      src="https://cdn.quasar.dev/img/parallax2.jpg"
-      style="height: 300px"
-      basic
-    >
+    <q-img :src="require(`../assets/${logo}`)" style="height: 300px" basic>
       <div class="absolute-bottom text-h6">{{ projectName }}</div>
     </q-img>
 
@@ -41,7 +37,7 @@ export default {
       data: [],
     };
   },
-  props: ["projectName", "tasks"],
+  props: ["projectName", "tasks", "logo"],
 };
 </script>
 
