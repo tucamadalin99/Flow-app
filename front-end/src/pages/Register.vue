@@ -4,7 +4,7 @@
       color="#ffffff"
       num="100"
       type="cobweb"
-      :canvas="{ backgroundColor: '#2E6CB5', height: '90rem' }"
+      :canvas="{ backgroundColor: '#2E6CB5', height: '96.5rem' }"
       :bg="true"
     />
     <div class="regDiv" style="max-width: 500px">
@@ -120,6 +120,24 @@
         </q-input>
 
         <q-input
+          ref="phone"
+          filled
+          v-model="phone"
+          type="text"
+          label="Phone Number"
+          lazy-rules
+          :rules="[
+            () => {
+              if (!nonEmpty) this.valid = false;
+            },
+          ]"
+        >
+          <template v-slot:prepend>
+            <q-icon name="phone"></q-icon>
+          </template>
+        </q-input>
+
+        <q-input
           ref="password"
           filled
           type="password"
@@ -206,6 +224,7 @@ export default {
       facebook: null,
       git: null,
       email: null,
+      phone: null,
       password: null,
       accept: false,
       valid: true,
@@ -218,6 +237,7 @@ export default {
   methods: {
     onSubmit() {
       let depId = 0;
+      console.log("HEEEI");
       if (this.department === "Sales") depId = 1;
       else if (this.department === "Public Relations") depId = 2;
       else if (this.department === "Human Resources") depId = 3;
@@ -228,6 +248,7 @@ export default {
         division: this.divizie,
         role: this.pozitie,
         email: this.email,
+        phone: this.phone,
         password: this.password,
         facebook: this.facebook,
         git: this.git,
@@ -243,14 +264,14 @@ export default {
       refs.facebook.validate();
       refs.git.validate();
       if (
-        refs.name.hasError ||
-        refs.surname.hasError ||
-        refs.division.hasError ||
-        refs.role.hasError ||
-        refs.email.hasError ||
-        refs.password.hasError ||
-        refs.facebook.hasError ||
-        refs.git.hasError
+        !refs.name.hasError &&
+        !refs.surname.hasError &&
+        !refs.division.hasError &&
+        !refs.role.hasError &&
+        !refs.email.hasError &&
+        !refs.password.hasError &&
+        !refs.facebook.hasError &&
+        !refs.git.hasError
       )
         Axios.post("http://localhost:8081/api/user/register", user)
           .then(() => {

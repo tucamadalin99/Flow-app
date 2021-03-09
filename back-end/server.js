@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser');
 const app = express();
 const PORT = 8081;
 const router = require('./routes');
@@ -23,17 +22,6 @@ const corsOptions = {
 };
 
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:8080");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Access-Control-Allow-Methods", "GET,DELETE,PUT,POST");
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
 
 initPassport(
   passport,
@@ -44,6 +32,7 @@ initPassport(
     return await UserModel.findOne({ where: { id: id } });
   }
 );
+
 
 app.use(
   session({
@@ -58,10 +47,22 @@ app.use(
   })
 );
 
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cors(corsOptions));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 
 app.use('/api', router);

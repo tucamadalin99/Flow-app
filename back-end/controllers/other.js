@@ -2,6 +2,7 @@ const connection = require('../models').connection;
 const DepartmentModel = require('../models').Department;
 const ProjectModel = require('../models').Project;
 const RoleModel = require('../models').Role;
+const UserModel = require('../models').User;
 
 const controller = {
     reset: async (req, res) => {
@@ -42,6 +43,11 @@ const controller = {
         }).catch(err => {
             res.status(500).send(err);
         })
+    },
+    getAllUsers: async (req, res) => {
+        UserModel.findAll({ attributes: ['name', 'surname', 'division', 'role', 'email', 'phone', 'facebook', 'git', 'status'], include: DepartmentModel })
+            .then((response) => res.status(200).send(response))
+            .catch((err) => res.status(500).send(err));
     }
 }
 

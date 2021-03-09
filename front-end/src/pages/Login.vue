@@ -22,10 +22,10 @@
           lazy-rules
           :rules="[
             (val) => (val && val.length > 0) || 'Cannot be empty',
-            (val) =>
-              (val &&
-                val.match(/^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$/)) ||
-              'Invalid email',
+            //(val) =>
+            //  (val &&
+            //val.match(/^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$/)) ||
+            // 'Invalid email',
           ]"
         >
           <template v-slot:prepend>
@@ -76,40 +76,40 @@ export default {
 
   methods: {
     onSubmit() {
-      if (this.accept !== true) {
-        this.$q.notify({
-          color: "red-5",
-          textColor: "white",
-          icon: "warning",
-          message: "You need to accept the license and terms first",
-        });
-      } else {
-        Axios.post(
-          "http://localhost:8081/api/user/login",
-          { email: this.email, password: this.password },
-          { withCredentials: true }
-        )
-          .then(() => {
+      // if (this.accept !== true) {
+      //   this.$q.notify({
+      //     color: "red-5",
+      //     textColor: "white",
+      //     icon: "warning",
+      //     message: "You need to accept the license and terms first",
+      //   });
+      // } else {
+      Axios.post(
+        "http://localhost:8081/api/user/login",
+        { email: this.email, password: this.password },
+        { withCredentials: true }
+      )
+        .then(() => {
+          this.$q.notify({
+            color: "indigo-8",
+            textColor: "white",
+            icon: "cloud_done",
+            message: `Welcome to Flow`,
+          });
+          this.$router.push("/");
+        })
+        .catch((err) => {
+          const errValues = Object.values(err.response.data);
+          errValues.map((item) => {
             this.$q.notify({
-              color: "indigo-8",
+              color: "red-9",
               textColor: "white",
-              icon: "cloud_done",
-              message: `Welcome to Flow`,
-            });
-            this.$router.push("/");
-          })
-          .catch((err) => {
-            const errValues = Object.values(err.response.data);
-            errValues.map((item) => {
-              this.$q.notify({
-                color: "red-9",
-                textColor: "white",
-                icon: "error",
-                message: item,
-              });
+              icon: "error",
+              message: item,
             });
           });
-      }
+        });
+      //}
     },
 
     onReset() {

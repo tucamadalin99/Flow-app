@@ -1,5 +1,6 @@
 const UserModel = require('../models').User;
 const TaskModel = require('../models').Task;
+const ProjectRefModel = require('../models').ProjectRef;
 const RoleRefModel = require('../models').RoleRef;
 const validateManager = require('./validations/manager');
 
@@ -42,7 +43,14 @@ const controller = {
 
     collectUserDataFromDepartment: async (req, res) => {
         const currentUser = await req.user;
-        UserModel.findAll({ where: { departmentId: currentUser.departmentId } }).then(users => {
+        UserModel.findAll({ include: { model: ProjectRefModel, include: TaskModel } }).then(users => {
+            let parsedUserData = [];
+            // users.forEach(user => {
+            //     let userObject = {};
+            //     userObject.email = user.email;
+            //     userObject.tasks = user.
+            // })
+            //to be continued
             res.status(200).send(users)
         }).catch(err => res.status(500).send(err));
     },
@@ -62,7 +70,10 @@ const controller = {
         } else {
             return res.status(400).send(errors);
         }
-    }
+    },
+
 }
+
+
 
 module.exports = controller;

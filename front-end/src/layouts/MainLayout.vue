@@ -35,17 +35,15 @@
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
           </q-avatar>
-          <div class="text-weight-bold">Simplu SiSCot</div>
-          <div>@siscot@gmail.com</div>
+          <div class="text-weight-bold">{{ getUser.fullName }}</div>
+          <div>{{ getUser.email }}</div>
         </div>
       </q-img>
       <q-scroll-area
         style="height: calc(100% - 150px); border-right: 1px solid #ddd"
       >
         <q-list>
-          <q-item-label header class="text-grey-8">
-            Manage
-          </q-item-label>
+          <q-item-label header class="text-grey-8"> Manage </q-item-label>
           <!-- <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
@@ -86,9 +84,7 @@
               <q-item-label>Tasks</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item-label header class="text-grey-8">
-            Contact
-          </q-item-label>
+          <q-item-label header class="text-grey-8"> Contact </q-item-label>
 
           <q-item clickable exact to="/contacts">
             <q-item-section avatar>
@@ -108,9 +104,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item-label header class="text-grey-8">
-            Account
-          </q-item-label>
+          <q-item-label header class="text-grey-8"> Account </q-item-label>
 
           <q-item clickable exact to="/changePass">
             <q-item-section avatar>
@@ -121,7 +115,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable exact to="/login">
+          <q-item clickable @click="handleLogout">
             <q-item-section avatar>
               <q-icon name="ion-exit" />
             </q-item-section>
@@ -140,6 +134,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+import Axios from "axios";
 export default {
   name: "MainLayout",
   // components: { EssentialLink },
@@ -147,17 +143,44 @@ export default {
     return {
       leftDrawerOpen: false,
       // essentialLinks: linksData,
-      dark: false
+      dark: false,
     };
   },
   methods: {
-    darkMode: function() {
+    darkMode: function () {
       this.$q.dark.toggle(this.dark);
-    }
-  }
-  // created() {
-  //   this.$q.dark.toggle(true);
-  // }
+    },
+    handleLogout: function () {
+      Axios.delete("http://localhost:8081/api/user/logout", {
+        withCredentials: true,
+      })
+        .then(() => {
+          this.$q.notify({
+            color: "indigo-8",
+            textColor: "white",
+            icon: "pan_tool",
+            message: `See you soon!`,
+          });
+          this.$router.push("/login");
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: "red-8",
+            textColor: "white",
+            icon: "error",
+            message: `There has been an error. Sorry...`,
+          });
+        });
+    },
+    ...mapActions(["fetchUser", "fetchUsers", "fetchActivity"]),
+  },
+  computed: mapGetters(["getUser"]),
+  created() {
+    // this.$q.dark.toggle(true);
+    this.fetchUser();
+    this.fetchUsers();
+    this.fetchActivity();
+  },
 };
 </script>
 <style scoped>
