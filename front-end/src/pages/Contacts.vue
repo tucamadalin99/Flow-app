@@ -235,6 +235,16 @@
                             />
                           </q-item-section>
                         </q-item>
+                        <!-- <q-item>
+                          <q-item-section>
+                            <q-input
+                              v-model="editedItem.status"
+                              readonly
+                              filled
+                              autogrow
+                            />
+                          </q-item-section>
+                        </q-item> -->
                       </q-list>
                     </q-form>
                   </q-card-section>
@@ -261,6 +271,64 @@
                 </q-card>
               </q-dialog>
             </div>
+
+            <div class="q-pa-sm q-gutter-sm">
+              <q-dialog v-model="show_activity">
+                <q-card style="width: 600px; max-width: 60vw">
+                  <q-card-section>
+                    <q-btn
+                      round
+                      flat
+                      dense
+                      icon="close"
+                      class="float-right"
+                      color="grey-8"
+                      v-close-popup
+                    ></q-btn>
+                    <div class="text-h6">Activity</div>
+                  </q-card-section>
+                  <q-separator inset></q-separator>
+                  <q-card-section class="q-pt-none">
+                    <q-form class="q-gutter-md">
+                      <q-list> </q-list>
+                    </q-form>
+                  </q-card-section>
+                  <q-card-section>
+                    <q-card-actions align="right">
+                      <q-btn
+                        flat
+                        label="Cancel"
+                        color="warning"
+                        dense
+                        v-close-popup
+                      ></q-btn>
+                      <q-btn
+                        v-if="statusChangePermission"
+                        flat
+                        label="OK"
+                        color="primary"
+                        dense
+                        v-close-popup
+                        @click="updateRow"
+                      ></q-btn>
+                    </q-card-actions>
+                  </q-card-section>
+                </q-card>
+              </q-dialog>
+            </div>
+          </template>
+
+          <template #body-cell-activity="props">
+            <q-td :props="props">
+              <q-btn
+                size="sm"
+                color="primary"
+                round
+                dense
+                @click="toggleActivity(props.row)"
+                icon="assignment_returned"
+              />
+            </q-td>
           </template>
 
           <template #body-cell-status="props">
@@ -327,6 +395,7 @@
                   {{props.row.name}}
                 </q-card-section>
                 <q-separator></q-separator> -->
+
                 <q-list dense>
                   <q-item v-for="col in props.cols" :key="col.name">
                     <q-item-section>
@@ -358,6 +427,7 @@
                         @click="editItem(props.row)"
                       ></q-btn>
                       <q-item-label
+                        style="font-size: 13px"
                         v-else
                         caption
                         :class="col.classes ? col.classes : ''"
@@ -394,6 +464,7 @@ export default {
 
       noti: () => {},
       show_dialog: false,
+      show_activity: false,
       editedIndex: -1,
       editedItem: {
         name: "",
@@ -416,6 +487,11 @@ export default {
       filter: "",
       mode: "list",
       usersColumns: [
+        {
+          name: "activity",
+          align: "left",
+          label: "Activity",
+        },
         {
           name: "name",
           align: "left",
@@ -530,6 +606,13 @@ export default {
       );
       this.editedItem = Object.assign({}, item);
       this.show_dialog = true;
+    },
+    toggleActivity(item) {
+      this.editedIndex = this.userData.findIndex(
+        (v, i) => v.__index === item.__index
+      );
+      this.editedItem = Object.assign({}, item);
+      this.show_activity = true;
     },
     close() {
       this.show_dialog = false;
