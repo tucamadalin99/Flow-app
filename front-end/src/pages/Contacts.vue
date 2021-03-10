@@ -716,8 +716,15 @@ export default {
     handleFilterDepartment(value) {
       let storedUsers = this.getUsers;
       let filteredTable = [];
-      if (value === "All" && this.filteredStatusValue !== "All") {
+      if (value === "All" && this.filteredStatusValue === "") {
         this.userData = storedUsers;
+      } else if (value === "All" && this.filteredStatusValue !== "All") {
+        storedUsers.forEach((el) => {
+          if (el.status === this.filteredStatusValue) {
+            filteredTable.push(el);
+          }
+          this.userData = filteredTable;
+        });
       } else if (
         value !== "All" &&
         (this.filteredStatusValue === "" || this.filteredStatusValue === "All")
