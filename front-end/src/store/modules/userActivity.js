@@ -13,12 +13,7 @@ const getters = {
 const actions = {
     async fetchActivity({ commit }) {
         const response = await Axios.get('http://localhost:8081/api/user/activity', { withCredentials: true });
-        console.log(response.data);
         commit('setActivity', response.data);
-        // Axios.get('http://localhost:8081/api/user/activity', { withCredentials: true }).then(response => {
-        //     console.log(response.data);
-        //     this.state.ok = true;
-        // })
     }
 };
 

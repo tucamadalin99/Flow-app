@@ -287,5 +287,9 @@ export default {
   .particles {
     display: none;
   }
+
+  .account-info {
+    width: 100%;
+  }
 }
 </style>

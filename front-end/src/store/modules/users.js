@@ -33,7 +33,6 @@ const actions = {
             parsedUsers.push(parsedUser);
         })
         commit('setUsers', parsedUsers);
-        console.log("S-a");
     }
 };
 

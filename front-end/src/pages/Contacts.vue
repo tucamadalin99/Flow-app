@@ -23,7 +23,6 @@
           flat
           bordered
           class="statement-table"
-          title="Contacts & Task Tracker"
           :data="userData"
           :hide-header="mode === 'grid'"
           :columns="usersColumns"
@@ -34,6 +33,18 @@
           :pagination.sync="pagination"
           :rows-per-page-options="[0]"
         >
+          <template v-slot:top-left>
+            <q-btn
+              class="export-btn"
+              style="margin-right: 5px"
+              color="primary"
+              icon-right="archive"
+              label="Export to csv"
+              no-caps
+              @click="exportTable"
+            />
+          </template>
+
           <template v-slot:top-right="props">
             <q-select
               class="filters"
@@ -390,7 +401,7 @@
             </q-td>
           </template>
 
-          <!--           <template v-slot:bottom>
+          <!-- <template v-slot:bottom>
             <div class="pagination-total q-mt-sm flex flex-center">
               <div class="text-medium-regular">
                 Total {{ userData.length }}
@@ -484,6 +495,24 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import Axios from "axios";
+import { exportFile } from "quasar";
+
+function wrapCsvValue(val, formatFn) {
+  let formatted = formatFn !== void 0 ? formatFn(val) : val;
+
+  formatted =
+    formatted === void 0 || formatted === null ? "" : String(formatted);
+
+  formatted = formatted.split('"').join('""');
+  /**
+   * Excel accepts \n and \r in strings, but some other CSV parsers do not
+   * Uncomment the next two lines to escape new lines
+   */
+  // .split('\n').join('\\n')
+  // .split('\r').join('\\r')
+  return `"${formatted}"`;
+}
+
 export default {
   data() {
     return {
@@ -688,12 +717,7 @@ export default {
       let storedUsers = this.getUsers;
       let filteredTable = [];
       if (value === "All" && this.filteredStatusValue !== "All") {
-        storedUsers.forEach((el) => {
-          if (el.status === this.filteredStatusValue) {
-            filteredTable.push(el);
-          }
-        });
-        this.userData = filteredTable;
+        this.userData = storedUsers;
       } else if (
         value !== "All" &&
         (this.filteredStatusValue === "" || this.filteredStatusValue === "All")
@@ -760,6 +784,36 @@ export default {
         this.userData = storedUsers;
       }
     },
+    exportTable() {
+      // naive encoding to csv format
+      const content = [this.usersColumns.map((col) => wrapCsvValue(col.label))]
+        .concat(
+          this.userData.map((row) =>
+            this.usersColumns
+              .map((col) =>
+                wrapCsvValue(
+                  typeof col.field === "function"
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format
+                )
+              )
+              .join(",")
+          )
+        )
+        .join("\r\n");
+      console.log(content);
+
+      const status = exportFile("table-export.csv", content, "text/csv");
+
+      if (status !== true) {
+        this.$q.notify({
+          message: "Browser denied file download...",
+          color: "negative",
+          icon: "warning",
+        });
+      }
+    },
     ...mapActions(["fetchUsers"]),
   },
   computed: mapGetters(["getUsers", "getUser"]),
@@ -768,10 +822,7 @@ export default {
     if (currentUser.isManager || currentUser.isCEO) {
       this.statusChangePermission = true;
     }
-    console.log("getter", this.statusChangePermission);
-    //console.log("morti", this.getUsers);
     this.userData = this.getUsers;
-    console.log(this.userData);
   },
   mounted() {
     // add indices
@@ -817,6 +868,10 @@ td:hover {
 
   .q-chip {
     max-width: 300px;
+  }
+
+  .export-btn {
+    margin-left: 6px;
   }
 }
 </style>
