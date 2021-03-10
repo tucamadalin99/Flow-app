@@ -172,7 +172,12 @@ export default {
           });
         });
     },
-    ...mapActions(["fetchUser", "fetchUsers", "fetchActivity"]),
+    ...mapActions([
+      "fetchUser",
+      "fetchUsers",
+      "fetchActivity",
+      "fetchCurrentTasks",
+    ]),
   },
   computed: mapGetters(["getUser"]),
   created() {
@@ -180,6 +185,7 @@ export default {
     this.fetchUser();
     this.fetchUsers();
     this.fetchActivity();
+    this.fetchCurrentTasks();
   },
 };
 </script>

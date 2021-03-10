@@ -148,7 +148,7 @@ const controller = {
 
     },
 
-    getResolvedActivity: async (req, res) => {
+    getActivity: async (req, res) => {
         const currentUser = await req.user;
         try {
             const response = await UserModel.findOne({
@@ -156,7 +156,7 @@ const controller = {
                 include: {
                     model: ProjectRefModel, attributes: ['id'],
                     include: [{ model: ProjectModel, attributes: ['id', 'name'] },
-                    { model: TaskModel, where: { status: "resolved" } }]
+                    { model: TaskModel, where: { status: req.params.type } }]
                 }
             })
             let activityArray = {};
@@ -179,8 +179,7 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
-
-    }
+    },
 }
 
 module.exports = controller;

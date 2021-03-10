@@ -7,7 +7,7 @@ const middleware = require('../controllers/middleware');
 ///GET REGION
 
 router.get('/profile', middleware.checkNotAuth, userController.getProfile);
-router.get('/activity', middleware.checkNotAuth, userController.getResolvedActivity);
+router.get('/activity/:type', middleware.checkNotAuth, userController.getActivity);
 
 ///////////////
 

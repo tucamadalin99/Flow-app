@@ -769,7 +769,6 @@ export default {
         value !== "All" &&
         (this.filteredDepValue !== "" || this.filteredDepValue !== "All")
       ) {
-        console.log("second");
         storedUsers.forEach((el) => {
           if (el.status === value && el.department === this.filteredDepValue) {
             filteredTable.push(el);

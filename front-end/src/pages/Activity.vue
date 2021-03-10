@@ -8,9 +8,9 @@
       :canvas="{ backgroundColor: '#fffff' }"
       :bg="true"
     />
-    <h2 v-if="Object.keys(this.activities).length !== 0">
+    <h3 v-if="Object.keys(this.activities).length !== 0">
       <strong>Activity</strong>
-    </h2>
+    </h3>
     <div v-else class="no-activity-container q-pa-md">
       <h2 class="text-weight-regular message">
         <q-icon name="warning" class="text-blue icon" />
@@ -51,7 +51,7 @@ export default {
 };
 </script>
 <style scoped>
-h2 {
+h3 {
   text-align: center;
 }
 .activity {
