@@ -6,6 +6,7 @@ const middleware = require('../controllers/middleware');
 router.post('/addTask', middleware.checkManager, ManagerController.addTask);
 
 router.put('/modifySalary', middleware.checkManager, ManagerController.modifySalary);
+router.put('/changeStatus', middleware.checkManager, ManagerController.changeStatus);
 router.post('/assignToProject', middleware.checkManager, ManagerController.assignRoleOnProject);
 
 

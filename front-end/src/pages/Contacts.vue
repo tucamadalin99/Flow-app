@@ -102,7 +102,7 @@
             </q-btn>
             <div class="q-pa-sm q-gutter-sm">
               <q-dialog v-model="show_dialog">
-                <q-card style="width: 600px; max-width: 80vw">
+                <q-card style="width: 600px; max-width: 100vw">
                   <q-card-section>
                     <q-btn
                       round
@@ -153,7 +153,9 @@
                         </q-item>
                         <q-item>
                           <q-item-section>
-                            <q-item-label class="q-pb-xs">Phone</q-item-label>
+                            <q-item-label class="q-pb-xs"
+                              >Phone (tap to call)</q-item-label
+                            >
                             <!-- <q-input
                               dense
                               outlined
@@ -222,34 +224,6 @@
                             </q-chip>
                           </q-item-section>
                         </q-item>
-                        <q-item v-if="statusChangePermission">
-                          <q-item-section>
-                            <q-item-label class="q-pb-xs"
-                              >Status:Active/Inactive</q-item-label
-                            >
-                            <!-- <q-input
-                              dense
-                              outlined
-                              v-model="editedItem.status"
-                            /> -->
-                            <q-select
-                              outlined
-                              v-model="editedItem.status"
-                              :options="['Active', 'Inactive']"
-                              label="Current Status"
-                            />
-                          </q-item-section>
-                        </q-item>
-                        <!-- <q-item>
-                          <q-item-section>
-                            <q-input
-                              v-model="editedItem.status"
-                              readonly
-                              filled
-                              autogrow
-                            />
-                          </q-item-section>
-                        </q-item> -->
                       </q-list>
                     </q-form>
                   </q-card-section>
@@ -279,7 +253,7 @@
 
             <div class="q-pa-sm q-gutter-sm">
               <q-dialog v-model="show_activity">
-                <q-card style="width: 600px; max-width: 80vw">
+                <q-card style="width: 600px; max-width: 100vw">
                   <q-card-section>
                     <q-btn
                       round
@@ -308,7 +282,7 @@
                             <q-chip
                               color="primary"
                               text-color="white"
-                              icon="title"
+                              icon="work"
                               size="18px"
                             >
                               {{ project.name }}
@@ -330,6 +304,20 @@
                           name="sentiment_very_dissatisfied"
                         />No activity
                       </p>
+
+                      <q-item v-if="statusChangePermission">
+                        <q-item-section>
+                          <q-item-label class="q-pb-xs"
+                            >Status:Active/Inactive</q-item-label
+                          >
+                          <q-select
+                            outlined
+                            v-model="editedItem.status"
+                            :options="['Active', 'Inactive']"
+                            label="Current Status"
+                          />
+                        </q-item-section>
+                      </q-item>
                     </q-form>
                   </q-card-section>
                   <q-card-section>
@@ -495,6 +483,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import Axios from "axios";
 export default {
   data() {
     return {
@@ -677,11 +666,20 @@ export default {
     },
     updateRow() {
       this.userData.splice(this.editedIndex, 1, this.editedItem);
-      this.$q.notify({
-        type: "positive",
-        message: `Item '${this.editedItem.name}' updated.`,
-        timeout: 500,
-      });
+      Axios.put(
+        "http://localhost:8081/api/manager/changeStatus",
+        { email: this.editedItem.email, status: this.editedItem.status },
+        { withCredentials: true }
+      )
+        .then(() => {
+          this.$q.notify({
+            type: "positive",
+            message: `Member '${this.editedItem.name}' updated.`,
+            timeout: 500,
+          });
+          this.fetchUsers(); //not sure if optimal
+        })
+        .catch((err) => console.log(err));
     },
     onStatusClick() {
       console.log("clicked");
@@ -766,7 +764,6 @@ export default {
   },
   computed: mapGetters(["getUsers", "getUser"]),
   created() {
-    //this.fetchUsers();
     const currentUser = this.getUser;
     if (currentUser.isManager || currentUser.isCEO) {
       this.statusChangePermission = true;

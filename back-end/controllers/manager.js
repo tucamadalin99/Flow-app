@@ -72,6 +72,19 @@ const controller = {
         }
     },
 
+    changeStatus: async (req, res) => {
+        try {
+            const foundUser = await UserModel.findOne({ where: { email: req.body.email } });
+            if (foundUser) {
+                foundUser.update({ status: req.body.status }).then(() => res.status(200).send({ message: "Status updated." }))
+            } else {
+                return res.status(404).send({ message: "Not found" })
+            }
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+    }
+
 }
 
 
