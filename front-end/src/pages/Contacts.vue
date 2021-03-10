@@ -23,7 +23,7 @@
           flat
           bordered
           class="statement-table"
-          title="Contacts"
+          title="Contacts & Task Tracker"
           :data="userData"
           :hide-header="mode === 'grid'"
           :columns="usersColumns"
@@ -102,7 +102,7 @@
             </q-btn>
             <div class="q-pa-sm q-gutter-sm">
               <q-dialog v-model="show_dialog">
-                <q-card style="width: 600px; max-width: 60vw">
+                <q-card style="width: 600px; max-width: 80vw">
                   <q-card-section>
                     <q-btn
                       round
@@ -161,11 +161,16 @@
                             /> -->
                             <q-chip
                               color="primary"
-                              text-color="white"
+                              text-color="green-5"
                               icon="phone"
                               size="18px"
                             >
-                              {{ editedItem.phone }}
+                              <a
+                                class="phone-href"
+                                :href="'tel:' + editedItem.phone"
+                              >
+                                {{ editedItem.phone }}
+                              </a>
                             </q-chip>
                           </q-item-section>
                         </q-item>
@@ -274,7 +279,7 @@
 
             <div class="q-pa-sm q-gutter-sm">
               <q-dialog v-model="show_activity">
-                <q-card style="width: 600px; max-width: 60vw">
+                <q-card style="width: 600px; max-width: 80vw">
                   <q-card-section>
                     <q-btn
                       round
@@ -285,12 +290,46 @@
                       color="grey-8"
                       v-close-popup
                     ></q-btn>
-                    <div class="text-h6">Activity</div>
+                    <div class="text-h6">
+                      {{ "Activity of " + editedItem.name }}
+                    </div>
                   </q-card-section>
                   <q-separator inset></q-separator>
                   <q-card-section class="q-pt-none">
                     <q-form class="q-gutter-md">
-                      <q-list> </q-list>
+                      <q-list v-if="tasksLength > 0">
+                        <q-item
+                          class="col projects"
+                          :key="project.name"
+                          v-for="project in editedItem.activity"
+                        >
+                          <q-item-section>
+                            <!-- <q-input dense outlined v-model="editedItem.git" /> -->
+                            <q-chip
+                              color="primary"
+                              text-color="white"
+                              icon="title"
+                              size="18px"
+                            >
+                              {{ project.name }}
+                            </q-chip>
+                          </q-item-section>
+                          <q-item-section>
+                            <ul>
+                              <li v-for="task in project.tasks" :key="task.id">
+                                {{ task.name }}
+                              </li>
+                            </ul>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                      <p class="text-h6 text-center q-pt-lg" v-else>
+                        <q-icon
+                          class="q-mr-xs"
+                          size="md"
+                          name="sentiment_very_dissatisfied"
+                        />No activity
+                      </p>
                     </q-form>
                   </q-card-section>
                   <q-card-section>
@@ -397,7 +436,7 @@
                 <q-separator></q-separator> -->
 
                 <q-list dense>
-                  <q-item v-for="col in props.cols" :key="col.name">
+                  <q-item class="col" v-for="col in props.cols" :key="col.name">
                     <q-item-section>
                       <q-item-label>{{ col.label }}</q-item-label>
                     </q-item-section>
@@ -426,6 +465,15 @@
                         icon="person"
                         @click="editItem(props.row)"
                       ></q-btn>
+                      <q-btn
+                        v-else-if="col.name === 'activity'"
+                        size="sm"
+                        color="primary"
+                        round
+                        dense
+                        @click="toggleActivity(props.row)"
+                        icon="assignment_returned"
+                      ></q-btn>
                       <q-item-label
                         style="font-size: 13px"
                         v-else
@@ -452,6 +500,7 @@ export default {
     return {
       statusChangePermission: false,
       inFs: false,
+      tasksLength: 0,
       columns: [
         // { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
         // { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
@@ -612,6 +661,7 @@ export default {
         (v, i) => v.__index === item.__index
       );
       this.editedItem = Object.assign({}, item);
+      this.tasksLength = Object.keys(this.editedItem.activity).length;
       this.show_activity = true;
     },
     close() {
@@ -724,7 +774,7 @@ export default {
     console.log("getter", this.statusChangePermission);
     //console.log("morti", this.getUsers);
     this.userData = this.getUsers;
-    //console.log(this.getUsers);
+    console.log(this.userData);
   },
   mounted() {
     // add indices
@@ -747,6 +797,16 @@ td:hover {
   border-radius: 2%;
 }
 
+.projects {
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-href {
+  text-decoration: none;
+  color: white;
+}
+
 @media only screen and (max-width: 600px) {
   .filters {
     margin: 2%;
@@ -756,6 +816,10 @@ td:hover {
     margin-left: 0;
     margin-top: 0;
     border-radius: 0;
+  }
+
+  .q-chip {
+    max-width: 300px;
   }
 }
 </style>
