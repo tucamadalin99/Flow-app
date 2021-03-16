@@ -15,6 +15,7 @@ const actions = {
         response.data.forEach(user => {
             let activityArray = {};
             let parsedUser = {};
+            parsedUser.id = user.id;
             parsedUser.name = user.name + " " + user.surname;
             parsedUser.department = user.department.name;
             parsedUser.email = user.email;

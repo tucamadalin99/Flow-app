@@ -62,6 +62,7 @@
 <script>
 import { ParticlesBg } from "particles-bg-vue";
 import Axios from "axios";
+import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -75,6 +76,13 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      "fetchUser",
+      "fetchUsers",
+      "fetchActivity",
+      "fetchCurrentTasks",
+      "fetchLeadProject",
+    ]),
     onSubmit() {
       // if (this.accept !== true) {
       //   this.$q.notify({
@@ -96,6 +104,10 @@ export default {
             icon: "cloud_done",
             message: `Welcome to Flow`,
           });
+          this.fetchUser();
+          this.fetchUsers();
+          this.fetchActivity();
+          this.fetchCurrentTasks();
           this.$router.push("/");
         })
         .catch((err) => {

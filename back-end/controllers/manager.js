@@ -34,7 +34,13 @@ const controller = {
         console.log(errors);
         if (Object.keys(errors).length === 0) {
             RoleRefModel.create(assignment)
-                .then(() => res.status(201).send({ message: `User ${assignment.userId} assigned on ${assignment.projectId} with the role ${assignment.roleId}` }))
+                .then(async () => {
+                    if (parseInt(assignment.roleId) === 2) {
+                        const user = await UserModel.findByPk(assignment.userId);
+                        await user.update({ isLead: true })
+                    }
+                    return res.status(201).send({ message: `User ${assignment.userId} assigned on ${assignment.projectId} with the role ${assignment.roleId}` })
+                })
                 .catch((err) => res.status(500).send(err))
         } else {
             return res.status(400).send(errors);

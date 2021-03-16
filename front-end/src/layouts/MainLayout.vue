@@ -84,6 +84,16 @@
               <q-item-label>Tasks</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item v-if="isLead" clickable exact to="/team">
+            <q-item-section avatar>
+              <q-icon name="group_work" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Your Team</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <q-item-label header class="text-grey-8"> Contact </q-item-label>
 
           <q-item clickable exact to="/contacts">
@@ -144,6 +154,7 @@ export default {
       leftDrawerOpen: false,
       // essentialLinks: linksData,
       dark: false,
+      isLead: false,
     };
   },
   methods: {
@@ -177,16 +188,33 @@ export default {
       "fetchUsers",
       "fetchActivity",
       "fetchCurrentTasks",
+      "fetchLeadProject",
     ]),
   },
   computed: mapGetters(["getUser"]),
   created() {
-    // this.$q.dark.toggle(true);
     this.fetchUser();
     this.fetchUsers();
     this.fetchActivity();
     this.fetchCurrentTasks();
   },
+  mounted() {
+    // this.$q.dark.toggle(true);
+
+    const currentUser = this.getUser;
+    console.log(currentUser);
+    this.isLead = currentUser.isLead;
+    if (this.isLead) {
+      this.fetchLeadProject();
+    }
+  },
+  // beforeMount() {
+
+  //   if (currentUser.isLead) {
+  //     this.isLead = true;
+  //     this.fetchLeadProject();
+  //   }
+  // },
 };
 </script>
 <style scoped>

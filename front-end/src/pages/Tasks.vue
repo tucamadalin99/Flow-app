@@ -51,6 +51,7 @@ export default {
 };
 </script>
 <style scoped>
+h2,
 h3 {
   text-align: center;
 }

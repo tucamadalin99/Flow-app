@@ -18,11 +18,11 @@ const routes = [
     path: '/login',
     component: () => import('pages/Login.vue')
   },
-   {
+  {
     path: '/register',
     component: () => import('pages/Register.vue')
   },
-   {
+  {
     path: '/account',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -31,7 +31,7 @@ const routes = [
   },
   {
     path: '/changePass',
-     component: () => import('layouts/MainLayout.vue'),
+    component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Password.vue') }
     ]
@@ -69,6 +69,14 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Contacts.vue') }
+    ]
+  }
+  ,
+  {
+    path: '/team',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Team.vue') }
     ]
   }
 

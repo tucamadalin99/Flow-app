@@ -34,7 +34,7 @@ const controller = {
                 await ProjectModel.create(project);
             }
 
-            const roles = ["Member", "Team Lead", "Project Manager"]
+            const roles = ["Member", "Team Lead", "Project Manager", "Ajutor HR", "Ajutor Sales", "Ajutor IT", "Ajutor PR"]
             let role = { role: "" };
             for (let i = 0; i < roles.length; i++) {
                 role.role = roles[i];
@@ -48,7 +48,7 @@ const controller = {
     },
     getAllUsers: async (req, res) => {
         UserModel.findAll({
-            attributes: ['name', 'surname', 'division', 'role', 'email', 'phone', 'facebook', 'git', 'status'],
+            attributes: ['id', 'name', 'surname', 'division', 'role', 'email', 'phone', 'facebook', 'git', 'status'],
             include: [{
                 model: ProjectRefModel, attributes: ['id'],
                 include: [

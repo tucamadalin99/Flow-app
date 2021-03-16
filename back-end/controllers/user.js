@@ -64,6 +64,7 @@ const controller = {
                 facebook: currentUser.facebook,
                 git: currentUser.git,
                 isManager: currentUser.isManager,
+                isLead: currentUser.isLead,
                 isCEO: currentUser.isCEO
             }
             res.status(200).send(user);
