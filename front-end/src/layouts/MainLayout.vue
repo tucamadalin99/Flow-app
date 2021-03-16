@@ -43,6 +43,15 @@
         style="height: calc(100% - 150px); border-right: 1px solid #ddd"
       >
         <q-list>
+          <q-item clickable exact to="/">
+            <q-item-section avatar>
+              <q-icon name="home" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Home</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <q-item-label header class="text-grey-8"> Manage </q-item-label>
           <!-- <EssentialLink
           v-for="link in essentialLinks"
