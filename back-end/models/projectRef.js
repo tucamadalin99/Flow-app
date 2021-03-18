@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) => {
             id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
             projectId: DataTypes.INTEGER,
             userId: DataTypes.INTEGER,
-            taskId: DataTypes.INTEGER
+            taskId: DataTypes.INTEGER,
+            departmentId: DataTypes.INTEGER
         },
         {
             uniqueKeys: {

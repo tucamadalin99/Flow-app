@@ -2,6 +2,7 @@ const UserModel = require('../models').User;
 const TaskModel = require('../models').Task;
 const ProjectRefModel = require('../models').ProjectRef;
 const RoleRefModel = require('../models').RoleRef;
+const StatusListModel = require('../models').StatusList;
 const validateManager = require('./validations/manager');
 
 const controller = {
@@ -62,6 +63,7 @@ const controller = {
     },
 
     addTask: async (req, res) => {
+        const currentUser = await req.user;
         const task = {
             name: req.body.name,
             startDate: req.body.startDate,
@@ -71,7 +73,22 @@ const controller = {
         }
         let errors = validateManager.task(task)
         if (Object.keys(errors).length === 0) {
-            TaskModel.create(task).then(() => res.status(201).send({ message: "Task created" }))
+            TaskModel.create(task).then((taskResp) => {
+                const refKeys = {
+                    projectId: req.body.projectId,
+                    userId: currentUser.id,
+                    taskId: taskResp.id,
+                    departmentId: currentUser.departmentId
+                }
+
+                let errorsRef = validateManager.taskRef(refKeys);
+                if (Object.keys(errorsRef).length === 0) {
+                    ProjectRefModel.create(refKeys).then(() => res.status(201).send({ message: "Task created" }))
+                        .catch(err => res.status(500).send(err));
+                } else {
+                    return res.status(400).send(errorsRef);
+                }
+            })
                 .catch(() => res.status(500).send({ message: "Server error" }))
         } else {
             return res.status(400).send(errors);
@@ -82,7 +99,12 @@ const controller = {
         try {
             const foundUser = await UserModel.findOne({ where: { email: req.body.email } });
             if (foundUser) {
-                foundUser.update({ status: req.body.status }).then(() => res.status(200).send({ message: "Status updated." }))
+                foundUser.update({ status: req.body.status }).then(() => {
+                    //todo: validate the creation
+                    StatusListModel.create({ userId: foundUser.id, departmentId: foundUser.departmentId, status: req.body.status })
+                        .then(() => res.status(201).send({ message: "User status changed and timestamp added" }))
+                        .catch(err => res.status(500).send(err));
+                })
             } else {
                 return res.status(404).send({ message: "Not found" })
             }

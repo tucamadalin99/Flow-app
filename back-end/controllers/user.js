@@ -60,12 +60,14 @@ const controller = {
                 department: dep.name,
                 division: currentUser.division,
                 email: currentUser.email,
+                phone: currentUser.phone,
                 role: currentUser.role,
                 facebook: currentUser.facebook,
                 git: currentUser.git,
                 isManager: currentUser.isManager,
                 isLead: currentUser.isLead,
-                isCEO: currentUser.isCEO
+                isCEO: currentUser.isCEO,
+                status: currentUser.status
             }
             res.status(200).send(user);
         } catch (err) {
@@ -96,7 +98,8 @@ const controller = {
         let assignment = {
             userId: currentUser.id,
             projectId: req.body.projectId,
-            taskId: req.body.taskId
+            taskId: req.body.taskId,
+            departmentId: currentUser.departmentId
         }
 
         let errors = validateUser.task(assignment);
@@ -114,7 +117,8 @@ const controller = {
         let resignment = {
             userId: currentUser.id,
             projectId: req.body.projectId,
-            taskId: req.body.taskId
+            taskId: req.body.taskId,
+            departmentId: currentUser.departmentId
         }
 
         let errors = validateUser.task(resignment);

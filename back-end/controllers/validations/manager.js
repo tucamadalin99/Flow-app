@@ -16,6 +16,16 @@ let validate = {
         return errors;
     },
 
+    taskRef: (object) => {
+        let errors = {};
+        if (!object.projectId || typeof object.projectId !== "number")
+            errors.malformedProjectId = "ProjectId should be not null and number"
+        if (!object.taskId || typeof object.taskId !== "number")
+            errors.malformedTaskId = "TaskId shoud be not null and number"
+
+        return errors;
+    },
+
     role: (object) => {
         let errors = {};
         if (!object.userId || !object.roleId || !object.projectId)

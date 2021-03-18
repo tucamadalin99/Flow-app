@@ -27,7 +27,7 @@ const controller = {
 
             }
 
-            const projects = ["Tap That Job", "SpringIT", "Serile Teatrului Studentesc", "Academia SpErantei", "Dare to Speak"];
+            const projects = ["Tap That Job", "SpringIT", "Serile Teatrului Studentesc", "Academia SpErantei", "Dare to Speak", "General", "General HR", "General Sales", "General PR", "General IT"];
             let project = { name: "" }
             for (let i = 0; i < projects.length; i++) {
                 project.name = projects[i];
