@@ -32,6 +32,30 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
+    },
+    addMemberToProject: async (req, res) => {
+        const userToBeAdded = {
+            roleId: 1,
+            userId: req.params.userId,
+            projectId: req.params.projectId
+        }
+        RolesRefModel.create(userToBeAdded)
+            .then(() => res.status(201).send({ message: "User added to project" }))
+            .catch(err => res.status(500).send(err));
+    },
+    removeMemberFromProject: async (req, res) => {
+        try {
+            const userToBeRemoved = await RolesRefModel.findOne({ where: { userId: req.params.userId } });
+            if (userToBeRemoved) {
+                await userToBeRemoved.destroy();
+                return res.status(200).send({ message: "User was removed" })
+            } else {
+                return res.status(400).send({ message: "User was not found" })
+            }
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+
     }
 }
 

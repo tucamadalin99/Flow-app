@@ -31,6 +31,7 @@ const actions = {
             })
             user.projectRefs.forEach(el => activityArray[el.project.id].tasks.push(el.task))
             parsedUser.activity = activityArray;
+            parsedUser.display = true;
             parsedUsers.push(parsedUser);
         })
         commit('setUsers', parsedUsers);
@@ -38,7 +39,11 @@ const actions = {
 };
 
 const mutations = {
-    setUsers: (state, users) => (state.users = users)
+    setUsers: (state, users) => (state.users = users),
+    setVisibleLeadChip: (state, user) => {
+        const i = state.users.map(usr => usr.id).indexOf(user.id);
+        state.users[i].display = false;
+    }
 };
 
 export default {

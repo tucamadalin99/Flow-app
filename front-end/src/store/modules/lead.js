@@ -19,7 +19,14 @@ const actions = {
 };
 
 const mutations = {
-    setLeadProject: (state, project) => (state.leadProject = project)
+    setLeadProject: (state, project) => (state.leadProject = project),
+    removeUser: (state, user) => {
+        const i = state.leadProject.members.map(usr => usr).indexOf(user.id);
+        state.leadProject.members.splice(i, 1);
+    },
+    addUserToProjectStore: (state, user) => {
+        state.leadProject.members.push(user);
+    }
 };
 
 export default {
