@@ -198,6 +198,7 @@ export default {
       "fetchActivity",
       "fetchCurrentTasks",
       "fetchLeadProject",
+      "fetchProjectTasks"
     ]),
   },
   computed: mapGetters(["getUser"]),
@@ -215,6 +216,7 @@ export default {
     this.isLead = currentUser.isLead;
     if (this.isLead) {
       this.fetchLeadProject();
+      this.fetchProjectTasks();
     }
   },
   // beforeMount() {

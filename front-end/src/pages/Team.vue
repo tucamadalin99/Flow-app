@@ -4,7 +4,9 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning" color="primary" text-color="white" />
-          <span class="q-ml-sm">Remove {{selectedUser.name}} from the project?</span>
+          <span class="q-ml-sm"
+            >Remove {{ selectedUser.name }} from the project?</span
+          >
         </q-card-section>
 
         <q-card-actions align="right">
@@ -53,7 +55,7 @@
       </q-img>
       <q-card-section>
         <div class="q-pa-md" style="max-width: 400px; margin: 0 auto">
-          <q-list bordered class="rounded-borders" >
+          <q-list bordered class="rounded-borders">
             <q-expansion-item
               expand-separator
               icon="groups"
@@ -91,11 +93,7 @@
               </q-card>
             </q-expansion-item>
 
-            <q-expansion-item
-              expand-separator
-              icon="assignment"
-              label="Tasks"
-            >
+            <q-expansion-item expand-separator icon="assignment" label="Tasks">
               <q-card>
                 <q-card-section>
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -120,7 +118,7 @@
                   suscipit iste eveniet doloribus ullam aliquid.
                 </q-card-section>
               </q-card>
-            </q-expansion-item>   
+            </q-expansion-item>
           </q-list>
         </div>
       </q-card-section>
@@ -137,6 +135,7 @@ export default {
     return {
       lead: {},
       users: [],
+      tasks: [],
       alert: false,
       addDialog: false,
       selectedUser: {},
@@ -161,35 +160,33 @@ export default {
         icon: "cloud_done",
         message: `${user.name} was removed from the project`,
       });
-
     },
     async addToProject(name) {
       let addUser = this.getUsers.find((user) => user.name === name);
-      try{
-         await Axios.post(
-        `http://localhost:8081/api/lead/addToProject/${addUser.id}/${this.getLeadProject.project.id}`,
-        null,
-        { withCredentials: true }
-      );
-      this.addUserToProjectStore(addUser.id);
-      this.users.push(addUser);
-      this.$q.notify({
-        color: "indigo-8",
-        textColor: "white",
-        icon: "cloud_done",
-        message: `${addUser.name} was added to the project`,
-      });
-      console.log(this.users);
-      this.forceRerender();
-      }catch{
-         this.$q.notify({
-        color: "red-7",
-        textColor: "white",
-        icon: "warning",
-        message: `${addUser.name} is already a member`,
-      });
+      try {
+        await Axios.post(
+          `http://localhost:8081/api/lead/addToProject/${addUser.id}/${this.getLeadProject.project.id}`,
+          null,
+          { withCredentials: true }
+        );
+        this.addUserToProjectStore(addUser.id);
+        this.users.push(addUser);
+        this.$q.notify({
+          color: "indigo-8",
+          textColor: "white",
+          icon: "cloud_done",
+          message: `${addUser.name} was added to the project`,
+        });
+        console.log(this.users);
+        this.forceRerender();
+      } catch {
+        this.$q.notify({
+          color: "red-7",
+          textColor: "white",
+          icon: "warning",
+          message: `${addUser.name} is already a member`,
+        });
       }
-     
     },
     toggleAlert(user) {
       this.selectedUser = user;

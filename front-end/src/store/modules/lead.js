@@ -2,12 +2,13 @@ import Axios from 'axios';
 
 const state = {
     leadProject: {
-
-    }
+    },
+    tasks: []
 };
 
 const getters = {
-    getLeadProject: (state) => state.leadProject
+    getLeadProject: (state) => state.leadProject,
+    getTasks: (state) => state.tasks
 };
 
 const actions = {
@@ -15,11 +16,21 @@ const actions = {
         const response = await Axios.get('http://localhost:8081/api/lead/getLeadProject', { withCredentials: true });
         console.log(response.data);
         commit('setLeadProject', response.data);
+    },
+    async fetchProjectTasks({ commit }) {
+        const projectResponse = await Axios.get('http://localhost:8081/api/lead/getLeadProject', { withCredentials: true });
+        const projectId = projectResponse.data.project.id;
+        if (projectId) {
+            const response = await Axios.get(`http://localhost:8081/api/lead/getTasks/${projectId}`, { withCredentials: true })
+            console.log(response.data);
+            commit('setTasks', response.data);
+        }
     }
 };
 
 const mutations = {
     setLeadProject: (state, project) => (state.leadProject = project),
+    setTasks: (state, tasks) => (state.tasks = tasks),
     removeUser: (state, user) => {
         const i = state.leadProject.members.map(usr => usr).indexOf(user.id);
         state.leadProject.members.splice(i, 1);

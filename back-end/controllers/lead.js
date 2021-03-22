@@ -1,6 +1,8 @@
 const UserModel = require('../models').User;
 const ProjectModel = require('../models').Project;
+const ProjectRefModel = require('../models').ProjectRef;
 const RolesRefModel = require('../models').RoleRef;
+const TaskModel = require('../models').Task;
 
 const controller = {
     // assignToProject: async (req, res) => {
@@ -56,6 +58,21 @@ const controller = {
             return res.status(500).send(err);
         }
 
+    },
+    getProjectTasks: async (req, res) => {
+        const currentUser = await req.user;
+        try {
+            const tasks = await TaskModel.findAll({
+                include: {model: ProjectRefModel, attributes:[], where: {projectId: req.params.projectId, departmentId: currentUser.departmentId}}
+            })
+            if (tasks) {
+                return res.status(200).send(tasks);
+            } else {
+                return res.status(400).send({message: "Tasks not found"})
+            }
+        } catch (err) {
+            return res.status(500).send(err);
+        }
     }
 }
 
