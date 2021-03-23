@@ -95,6 +95,17 @@ const controller = {
         }
     },
 
+    removeTask: async (req, res) => {
+        try {
+            const task = await TaskModel.findByPk(req.params.taskId);
+            if (task)
+                await task.destroy();
+            return res.status(200).send({ message: "Task deleted and cascaded constraints" });
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+    },
+
     changeStatus: async (req, res) => {
         try {
             const foundUser = await UserModel.findOne({ where: { email: req.body.email } });

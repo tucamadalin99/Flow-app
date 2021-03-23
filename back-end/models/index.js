@@ -39,8 +39,8 @@ ProjectRef.belongsTo(User, { foreignKey: "userId" });
 Project.hasMany(ProjectRef, { foreignKey: "projectId" });
 ProjectRef.belongsTo(Project, { foreignKey: "projectId" });
 
-Task.hasMany(ProjectRef, { foreignKey: "taskId" });
-ProjectRef.belongsTo(Task, { foreignKey: "taskId" });
+Task.hasMany(ProjectRef, { foreignKey: "taskId" }, {onDelete: "cascade"});
+ProjectRef.belongsTo(Task, { foreignKey: "taskId" }, { onDelete: "cascade" });
 
 Department.hasMany(ProjectRef, { foreignKey: "departmentId" });
 ProjectRef.belongsTo(Department, { foreignKey: "departmentId" });

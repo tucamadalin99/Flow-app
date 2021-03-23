@@ -21,6 +21,27 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+     <q-dialog v-model="taskAlert" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="warning" color="primary" text-color="white" />
+          <span class="q-ml-sm"
+            >Remove {{ selectedTask.name }} from the project?</span
+          >
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn
+            flat
+            label="Remove"
+            @click="removeTask(selectedTask)"
+            color="primary"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="addDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
@@ -96,10 +117,29 @@
             <q-expansion-item expand-separator icon="assignment" label="Tasks">
               <q-card>
                 <q-card-section>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Quidem, eius reprehenderit eos corrupti commodi magni quaerat
-                  ex numquam, dolorum officiis modi facere maiores architecto
-                  suscipit iste eveniet doloribus ullam aliquid.
+                  <q-chip v-for="task in tasks" :key="task.id">
+                    {{ task.name + " until " + task.endDate }}
+                    <q-btn
+                      round
+                      v-model="task.visible"
+                      @click="toggleTaskAlert(task)"
+                      class="q-ml-sm q-mt-sm q-mb-sm"
+                      size="8px"
+                      color="red-7"
+                      icon="close"
+                    />
+                  </q-chip>
+                  <q-separator spaced />
+                  <p>
+                    <q-btn
+                      @click="addDialog = true"
+                      size="10px"
+                      round
+                      color="primary"
+                      icon="add"
+                    />
+                    Add Task
+                  </p>
                 </q-card-section>
               </q-card>
             </q-expansion-item>
@@ -137,8 +177,10 @@ export default {
       users: [],
       tasks: [],
       alert: false,
+      taskAlert: false,
       addDialog: false,
       selectedUser: {},
+      selectedTask: {},
       currentDepartmentUsers: [],
       addUser: null,
       componentKey: 0,
@@ -159,6 +201,18 @@ export default {
         textColor: "white",
         icon: "cloud_done",
         message: `${user.name} was removed from the project`,
+      });
+    },
+    async removeTask(task){
+      await Axios.delete(`http://localhost:8081/api/lead/removeTaskLead/${task.id}`, {withCredentials: true})
+      this.setVisibleTaskChip(task);
+        const i = this.tasks.map(t => t.id).indexOf(task.id);
+      this.tasks.splice(i, 1);
+      this.$q.notify({
+        color: "indigo-8",
+        textColor: "white",
+        icon: "cloud_done",
+        message: `${task.name} was removed from the project`,
       });
     },
     async addToProject(name) {
@@ -193,6 +247,10 @@ export default {
       this.alert = true;
       console.log(this.selectedUser);
     },
+    toggleTaskAlert(task){
+      this.selectedTask = task;
+      this.taskAlert = true;
+    },
     forceRerender() {
       this.componentKey += 1;
     },
@@ -200,12 +258,13 @@ export default {
       "removeUser",
       "addUserToProjectStore",
       "setVisibleLeadChip",
+      "setVisibleTaskChip",
       "setUsers",
     ]),
     ...mapActions(["fetchUsers"]),
   },
   computed: {
-    ...mapGetters(["getLeadProject", "getUsers", "getUser"]),
+    ...mapGetters(["getLeadProject", "getUsers", "getUser", "getTasks"]),
   },
   created() {
     this.lead = this.getLeadProject;
@@ -219,6 +278,7 @@ export default {
       if (user.department === currentUser.department)
         this.currentDepartmentUsers.push(user.name);
     });
+    this.tasks = this.getTasks;
   },
 };
 </script>
