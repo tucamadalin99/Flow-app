@@ -21,7 +21,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-     <q-dialog v-model="taskAlert" persistent>
+    <q-dialog v-model="taskAlert" persistent>
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning" color="primary" text-color="white" />
@@ -68,6 +68,49 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="addTaskDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="person_add" color="primary" text-color="white" />
+          <span class="q-ml-sm">Add tasks</span>
+        </q-card-section>
+
+        <q-card-section>
+          <q-input v-model="task.name" label="Task Name" />
+          <q-input v-model="task.type" label="Task Type" />
+          <p class="q-pt-sm">Deadline</p>
+          <q-input
+            class="q-mt-sm"
+            filled
+            v-model="task.endDate"
+            mask="date"
+            :rules="['date']"
+          >
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy
+                  ref="qDateProxy"
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date v-model="task.endDate">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Close" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn @click="addTask()" flat label="Add" color="primary" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-card class="lead-card">
       <q-img src="https://cdn.quasar.dev/img/parallax2.jpg">
         <div class="absolute-top text-center text-h4">
@@ -86,7 +129,7 @@
                 <q-card-section :key="componentKey">
                   <q-chip
                     v-for="user in users"
-                    :key="user.id"
+                    :key="user.id + 'U'"
                     v-model="user.display"
                   >
                     {{ user.name + " - " + user.role }}
@@ -116,12 +159,16 @@
 
             <q-expansion-item expand-separator icon="assignment" label="Tasks">
               <q-card>
-                <q-card-section>
-                  <q-chip v-for="task in tasks" :key="task.id">
+                <q-card-section :key="componentKey">
+                  <q-chip
+                    v-for="task in tasks"
+                    :key="task.id + 'T'"
+                    v-model="task.display"
+                  >
                     {{ task.name + " until " + task.endDate }}
                     <q-btn
                       round
-                      v-model="task.visible"
+                      v-model="task.display"
                       @click="toggleTaskAlert(task)"
                       class="q-ml-sm q-mt-sm q-mb-sm"
                       size="8px"
@@ -132,7 +179,7 @@
                   <q-separator spaced />
                   <p>
                     <q-btn
-                      @click="addDialog = true"
+                      @click="addTaskDialog = true"
                       size="10px"
                       round
                       color="primary"
@@ -179,11 +226,23 @@ export default {
       alert: false,
       taskAlert: false,
       addDialog: false,
+      addTaskDialog: false,
       selectedUser: {},
       selectedTask: {},
       currentDepartmentUsers: [],
       addUser: null,
+      assignedTask: null,
+      assignedMember: null,
       componentKey: 0,
+      task: {
+        name: "",
+        startDate: this.formatDate(new Date()),
+        endDate: this.formatDate(new Date()),
+        type: "",
+        projectId: null,
+        display: true,
+      },
+      addingTask: {},
     };
   },
   methods: {
@@ -192,9 +251,10 @@ export default {
         `http://localhost:8081/api/lead/removeFromProject/${user.id}`,
         { withCredentials: true }
       );
-      this.setVisibleLeadChip(user);
+      this.setInvisibleLeadChip(user);
       this.removeUser(user);
-      this.users.splice(user.id, 1);
+      let index = this.users.findIndex((el) => el === user);
+      this.users.splice(index, 1);
       console.log(this.users);
       this.$q.notify({
         color: "indigo-8",
@@ -203,42 +263,51 @@ export default {
         message: `${user.name} was removed from the project`,
       });
     },
-    async removeTask(task){
-      await Axios.delete(`http://localhost:8081/api/lead/removeTaskLead/${task.id}`, {withCredentials: true})
-      this.setVisibleTaskChip(task);
-        const i = this.tasks.map(t => t.id).indexOf(task.id);
-      this.tasks.splice(i, 1);
+    async removeTask(task) {
+      await Axios.delete(
+        `http://localhost:8081/api/lead/removeTaskLead/${task.id}`,
+        { withCredentials: true }
+      );
       this.$q.notify({
         color: "indigo-8",
         textColor: "white",
         icon: "cloud_done",
         message: `${task.name} was removed from the project`,
       });
+      console.log(task);
+      let index = this.tasks.findIndex((el) => el.id === task.id);
+      this.tasks.splice(index, 1);
+      this.setInvisibleTaskChip(task);
+      //this.forceRerender();
+      //console.log(task);
     },
     async addToProject(name) {
-      let addUser = this.getUsers.find((user) => user.name === name);
       try {
         await Axios.post(
-          `http://localhost:8081/api/lead/addToProject/${addUser.id}/${this.getLeadProject.project.id}`,
+          `http://localhost:8081/api/lead/addToProject/${this.addUser.value}/${this.getLeadProject.project.id}`,
           null,
           { withCredentials: true }
         );
-        this.addUserToProjectStore(addUser.id);
-        this.users.push(addUser);
+        this.addUserToProjectStore(this.addUser.value);
         this.$q.notify({
           color: "indigo-8",
           textColor: "white",
           icon: "cloud_done",
-          message: `${addUser.name} was added to the project`,
+          message: `${this.addUser.label} was added to the project`,
         });
+        let addedUser = this.getUsers.find(
+          (user) => user.id === this.addUser.value
+        );
+        this.users.push(addedUser);
         console.log(this.users);
+        this.setVisibleLeadChip(addedUser);
         this.forceRerender();
       } catch {
         this.$q.notify({
           color: "red-7",
           textColor: "white",
           icon: "warning",
-          message: `${addUser.name} is already a member`,
+          message: `${this.addUser.label} is already a member`,
         });
       }
     },
@@ -247,19 +316,61 @@ export default {
       this.alert = true;
       console.log(this.selectedUser);
     },
-    toggleTaskAlert(task){
+    toggleTaskAlert(task) {
       this.selectedTask = task;
       this.taskAlert = true;
     },
     forceRerender() {
       this.componentKey += 1;
     },
+    formatDate(date) {
+      let dd = date.getDate();
+      let mm = date.getMonth() + 1;
+      let yyyy = date.getFullYear();
+      if (dd < 10) dd = `0${dd}`;
+      if (mm < 10) mm = `0${mm}`;
+
+      return `${yyyy}/${mm}/${dd}`;
+    },
+    async addTask() {
+      Object.assign(this.addingTask, this.task);
+      this.addingTask.projectId = this.getLeadProject.project.id;
+      const response = await Axios.post(
+        "http://localhost:8081/api/lead/addLeadTask",
+        this.addingTask,
+        { withCredentials: true }
+      );
+      this.addingTask.id = response.data.taskId;
+      this.addStoreTask(this.addingTask);
+      this.tasks.push(this.addingTask);
+      this.setVisibleTaskChip(this.addingTask);
+      this.$q.notify({
+        color: "indigo-8",
+        textColor: "white",
+        icon: "cloud_done",
+        message: `${this.addingTask.name} was added to the project`,
+      });
+      this.forceRerender();
+      console.log(this.task);
+      this.task = {
+        name: "",
+        startDate: this.formatDate(new Date()),
+        endDate: this.formatDate(new Date()),
+        type: "",
+        projectId: null,
+        display: true,
+      };
+      this.addingTask = {};
+    },
     ...mapMutations([
       "removeUser",
       "addUserToProjectStore",
       "setVisibleLeadChip",
+      "setInvisibleLeadChip",
       "setVisibleTaskChip",
+      "setInvisibleTaskChip",
       "setUsers",
+      "addStoreTask",
     ]),
     ...mapActions(["fetchUsers"]),
   },
@@ -276,9 +387,12 @@ export default {
     const currentUser = this.getUser;
     this.getUsers.forEach((user) => {
       if (user.department === currentUser.department)
-        this.currentDepartmentUsers.push(user.name);
+        this.currentDepartmentUsers.push({ label: user.name, value: user.id });
     });
-    this.tasks = this.getTasks;
+    this.getTasks.forEach((task) => {
+      this.tasks.push(task);
+    });
+    console.log("hey", this.tasks);
   },
 };
 </script>

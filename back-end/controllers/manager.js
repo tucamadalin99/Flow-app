@@ -83,7 +83,7 @@ const controller = {
 
                 let errorsRef = validateManager.taskRef(refKeys);
                 if (Object.keys(errorsRef).length === 0) {
-                    ProjectRefModel.create(refKeys).then(() => res.status(201).send({ message: "Task created" }))
+                    ProjectRefModel.create(refKeys).then((response) => res.status(201).send(response))
                         .catch(err => res.status(500).send(err));
                 } else {
                     return res.status(400).send(errorsRef);

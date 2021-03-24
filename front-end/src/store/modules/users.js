@@ -42,7 +42,13 @@ const mutations = {
     setUsers: (state, users) => (state.users = users),
     setVisibleLeadChip: (state, user) => {
         const i = state.users.map(usr => usr.id).indexOf(user.id);
+        //state.users[i].display = false;
+        state.users[i].display = true;
+    },
+    setInvisibleLeadChip: (state, user) => {
+        const i = state.users.map(usr => usr.id).indexOf(user.id);
         state.users[i].display = false;
+        
     }
 };
 

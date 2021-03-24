@@ -34,19 +34,27 @@ const mutations = {
     setLeadProject: (state, project) => (state.leadProject = project),
     setTasks: (state, tasks) => (state.tasks = tasks),
     setVisibleTaskChip: (state, task) => {
-        const i = state.tasks.map(t => t.id).indexOf(task.id);
+        const i = state.tasks.findIndex(t => t.id === task.id)
+        state.tasks[i].display = true;
+    },
+    setInvisibleTaskChip: (state, task) => {
+        const i = state.tasks.findIndex(t => t.id === task.id)
         state.tasks[i].display = false;
+        console.log(i);
     },
     removeUser: (state, user) => {
         const i = state.leadProject.members.map(usr => usr).indexOf(user.id);
         state.leadProject.members.splice(i, 1);
     },
-    removeTask: (state, task) => {
+    removeStoreTask: (state, task) => {
         const i = state.tasks.members.map(t => t).indexOf(task.id);
         state.tasks.splice(i, 1);
     },
     addUserToProjectStore: (state, user) => {
         state.leadProject.members.push(user);
+    },
+    addStoreTask: (state, task) => {
+        state.tasks.push(task);
     }
 };
 
