@@ -9,6 +9,7 @@ router.get('/getTasks/:projectId', middleware.checkLead, LeadController.getProje
 
 router.post('/addToProject/:userId/:projectId', middleware.checkLead, LeadController.addMemberToProject);
 router.post('/addLeadTask', middleware.checkLead, ManagerController.addTask);
+router.post('/assignTask', middleware.checkLead, ManagerController.assignToTask);
 
 router.delete('/removeFromProject/:userId', middleware.checkLead, LeadController.removeMemberFromProject);
 router.delete('/removeTaskLead/:taskId', middleware.checkLead, ManagerController.removeTask);

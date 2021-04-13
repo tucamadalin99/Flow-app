@@ -95,6 +95,21 @@ const controller = {
         }
     },
 
+    assignToTask: async (req, res) => {
+        //Polish this function
+        const currentUser = await req.user;
+        const assignment = {
+            projectId: req.body.projectId,
+            userId: req.body.userId,
+            taskId: req.body.taskId,
+            departmentId: currentUser.departmentId
+        }
+
+        ProjectRefModel.create(assignment)
+            .then(() => res.status(200).send({ message: "User added to task!" }))
+            .catch((err) => res.status(500).send(err));
+    },
+
     removeTask: async (req, res) => {
         try {
             const task = await TaskModel.findByPk(req.params.taskId);

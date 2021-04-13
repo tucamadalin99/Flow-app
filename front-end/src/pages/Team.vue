@@ -72,7 +72,7 @@
     <q-dialog v-model="addTaskDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          <q-avatar icon="person_add" color="primary" text-color="white" />
+          <q-avatar icon="note_add" color="primary" text-color="white" />
           <span class="q-ml-sm">Add tasks</span>
         </q-card-section>
 
@@ -104,13 +104,43 @@
             </template>
           </q-input>
         </q-card-section>
-
         <q-card-actions align="right">
           <q-btn flat label="Cancel" color="primary" v-close-popup />
           <q-btn @click="addTask()" flat label="Add" color="primary" />
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="addAssignmentDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="person_add" color="primary" text-color="white" />
+          <span class="q-ml-sm">Assign member to task</span>
+        </q-card-section>
+
+        <q-card-section>
+          <q-select
+            v-model="assignedMember"
+            :options="memberNames"
+            label="Your department"
+          />
+        </q-card-section>
+
+        <q-card-section>
+          <q-select
+            v-model="assignedTask"
+            :options="taskNames"
+            label="Available Tasks"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Add" @click="addToTask" color="primary" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-card class="lead-card">
       <q-img src="https://cdn.quasar.dev/img/parallax2.jpg">
         <div class="absolute-top text-center text-h4">
@@ -193,16 +223,28 @@
 
             <q-expansion-item
               expand-separator
-              icon="drafts"
-              label="Drafts"
+              icon="assignment_ind"
+              label="Assignments"
               header-class="text-purple"
             >
               <q-card>
                 <q-card-section>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Quidem, eius reprehenderit eos corrupti commodi magni quaerat
-                  ex numquam, dolorum officiis modi facere maiores architecto
-                  suscipit iste eveniet doloribus ullam aliquid.
+                  <q-separator spaced />
+                  <p>
+                    <q-btn
+                      @click="addAssignmentDialog = true"
+                      size="10px"
+                      round
+                      color="primary"
+                      icon="add"
+                    />
+                    Assign member
+                  </p>
+                  <Task
+                    v-for="assignment in assignments"
+                    :key="assignment.id"
+                    :assignment="assignment"
+                  />
                 </q-card-section>
               </q-card>
             </q-expansion-item>
@@ -215,6 +257,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import Task from "../components/Task";
 import Axios from "axios";
 export default {
   name: "Team",
@@ -223,10 +266,16 @@ export default {
       lead: {},
       users: [],
       tasks: [],
+      assignments: [],
+      memberNames: [],
+      members: [],
+      emails: [],
+      taskNames: [],
       alert: false,
       taskAlert: false,
       addDialog: false,
       addTaskDialog: false,
+      addAssignmentDialog: false,
       selectedUser: {},
       selectedTask: {},
       currentDepartmentUsers: [],
@@ -244,6 +293,9 @@ export default {
       },
       addingTask: {},
     };
+  },
+  components: {
+    Task,
   },
   methods: {
     async remove(user) {
@@ -311,6 +363,19 @@ export default {
         });
       }
     },
+    addToTask() {
+      // let found = this.tasks.find((tsk) => tsk.id == this.assignedTask.value);
+      // console.log(found);
+      // found.members = [];
+      // //found.members.push({name: this.assignedMember})
+      // let member = this.users.find(
+      //   (usr) => usr.id == this.assignedMember.value
+      // );
+      // found.members.push(member);
+      // console.log(found);
+      console.log(this.tasks);
+      //bugs
+    },
     toggleAlert(user) {
       this.selectedUser = user;
       this.alert = true;
@@ -362,6 +427,20 @@ export default {
       };
       this.addingTask = {};
     },
+    getMemberNames() {
+      if (this.users.length > 0) {
+        this.users.forEach((user) => {
+          this.memberNames.push({ label: user.name, value: user.id });
+          this.emails.push({ label: user.email, value: user.id });
+        });
+      }
+      if (this.tasks.length > 0) {
+        this.tasks.forEach((task) => {
+          this.taskNames.push({ label: task.name, value: task.id });
+        });
+      }
+      console.log(this.emails);
+    },
     ...mapMutations([
       "removeUser",
       "addUserToProjectStore",
@@ -392,7 +471,23 @@ export default {
     this.getTasks.forEach((task) => {
       this.tasks.push(task);
     });
-    console.log("hey", this.tasks);
+
+    this.getTasks.forEach((task) => {
+      let obj = {};
+      obj.id = task.id;
+      obj.name = task.name;
+      obj.members = [];
+      // console.log(task);
+      if (task.projectRefs.length > 0) {
+        task.projectRefs.forEach((ref, i) => {
+          obj.members.push(this.users.find((usr) => usr.id === ref.userId));
+          obj.members[i].letter = obj.members[i].name[0];
+        });
+      }
+
+      this.assignments.push(obj);
+    });
+    console.log(this.assignements);
   },
 };
 </script>

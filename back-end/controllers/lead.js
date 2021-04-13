@@ -62,10 +62,11 @@ const controller = {
     getProjectTasks: async (req, res) => {
         const currentUser = await req.user;
         try {
-            const tasks = await TaskModel.findAll({
-                include: {model: ProjectRefModel, attributes:[], where: {projectId: req.params.projectId, departmentId: currentUser.departmentId}}
+            let tasks = await TaskModel.findAll({
+                include: {model: ProjectRefModel,  where: {projectId: req.params.projectId, departmentId: currentUser.departmentId}}
             })
             if (tasks) {
+                //const members = await ProjectRefModel.findAll({where: {projectId}})
                 return res.status(200).send(tasks);
             } else {
                 return res.status(400).send({message: "Tasks not found"})
