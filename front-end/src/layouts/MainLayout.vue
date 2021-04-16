@@ -103,6 +103,15 @@
             </q-item-section>
           </q-item>
 
+          <q-item v-if="isManager" clickable exact to="/manager">
+            <q-item-section avatar>
+              <q-icon name="work" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Your Department</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <q-item-label header class="text-grey-8"> Contact </q-item-label>
 
           <q-item clickable exact to="/contacts">
@@ -164,6 +173,7 @@ export default {
       // essentialLinks: linksData,
       dark: false,
       isLead: false,
+      isManager: false,
     };
   },
   methods: {
@@ -214,6 +224,7 @@ export default {
     const currentUser = this.getUser;
     console.log(currentUser);
     this.isLead = currentUser.isLead;
+    this.isManager = currentUser.isManager;
     if (this.isLead) {
       this.fetchLeadProject();
       this.fetchProjectTasks();

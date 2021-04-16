@@ -223,6 +223,7 @@
 
             <q-expansion-item
               expand-separator
+              @click="getMemberNames"
               icon="assignment_ind"
               label="Assignments"
               header-class="text-purple"
@@ -330,6 +331,10 @@ export default {
       let index = this.tasks.findIndex((el) => el.id === task.id);
       this.tasks.splice(index, 1);
       this.setInvisibleTaskChip(task);
+      let asIndex = this.assignments.findIndex((el) => el.id === task.id);
+      if (asIndex >= 0) {
+        this.assignments.splice(asIndex, 1);
+      }
       //this.forceRerender();
       //console.log(task);
     },
@@ -415,8 +420,14 @@ export default {
         icon: "cloud_done",
         message: `${this.addingTask.name} was added to the project`,
       });
+      const firstAssign = {
+        id: this.addingTask.id,
+        name: this.addingTask.name,
+        members: [{letter: this.getUser.fullName[0], name: this.getUser.fullName, email: this.getUser.email}],
+      };
+      this.assignments.push(firstAssign);
       this.forceRerender();
-      console.log(this.task);
+      console.log("test1", this.addingTask, this.assignments);
       this.task = {
         name: "",
         startDate: this.formatDate(new Date()),
@@ -429,12 +440,15 @@ export default {
     },
     getMemberNames() {
       if (this.users.length > 0) {
+        this.memberNames = [];
+        this.emails = [];
         this.users.forEach((user) => {
           this.memberNames.push({ label: user.name, value: user.id });
           this.emails.push({ label: user.email, value: user.id });
         });
       }
       if (this.tasks.length > 0) {
+        this.taskNames = [];
         this.tasks.forEach((task) => {
           this.taskNames.push({ label: task.name, value: task.id });
         });
@@ -471,6 +485,8 @@ export default {
     this.getTasks.forEach((task) => {
       this.tasks.push(task);
     });
+
+    console.log(currentUser);
 
     this.getTasks.forEach((task) => {
       let obj = {};

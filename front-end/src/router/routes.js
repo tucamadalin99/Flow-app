@@ -78,6 +78,13 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Team.vue') }
     ]
+  },
+  {
+    path: '/manager',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {path: '', component: () => import('pages/Manager.vue')}
+    ]
   }
 
 ]

@@ -137,6 +137,30 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
+    },
+    getActivePercentage: async (req, res) => {
+        try {
+            const currentUser = await req.user;
+            const members = await UserModel.findAll({ where: { departmentId: currentUser.departmentId } });
+            let proportions = [0, 0, 0];
+            members.forEach(member => {
+                switch (member.status) {
+                    case "Active":
+                        proportions[0] += 1;
+                        break;
+                    case "Inactive":
+                        proportions[1] += 1;
+                        break;
+                    case "Junior":
+                        proportions[2] += 1;
+                        break;
+                    default: break;
+                }
+            })
+            return res.status(200).send(proportions);
+        } catch (err) {
+            return res.status(500).send(err);
+        }
     }
 
 }
