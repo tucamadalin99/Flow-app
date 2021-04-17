@@ -161,6 +161,15 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
+    },
+    getSalaryData: async (req, res) => {
+        try {
+            const currentUser = await req.user;
+            const members = await UserModel.findAll({ where: { departmentId: currentUser.departmentId }, attributes: ['name', 'salary'] });
+            return res.status(200).send(members);
+        } catch (err) {
+            return res.status(500).send(err);
+        }
     }
 
 }

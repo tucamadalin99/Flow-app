@@ -12,5 +12,6 @@ router.post('/assignToProject', middleware.checkManager, ManagerController.assig
 
 router.get('/collectEmployeeData', middleware.checkManager, ManagerController.collectUserDataFromDepartment);
 router.get("/getActivePercentage", middleware.checkManager, ManagerController.getActivePercentage);
+router.get('/getSalaryData', middleware.checkManager, ManagerController.getSalaryData);
 
 module.exports = router;

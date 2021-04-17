@@ -108,7 +108,7 @@
               <q-icon name="work" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Your Department</q-item-label>
+              <q-item-label>Department Analysis</q-item-label>
             </q-item-section>
           </q-item>
 
