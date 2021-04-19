@@ -48,7 +48,8 @@ const controller = {
 
     logout: async (req, res) => {
         req.logOut();
-        res.status(200).send({ message: "Logged out" });
+        res.status(200).clearCookie('cookieLogin').send({ message: "Logged out" });
+
     },
 
     getProfile: async (req, res) => {

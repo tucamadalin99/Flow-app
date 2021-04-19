@@ -1,5 +1,6 @@
 const UserModel = require('../models').User;
 const TaskModel = require('../models').Task;
+const ProjectModel = require("../models").Project;
 const ProjectRefModel = require('../models').ProjectRef;
 const RoleRefModel = require('../models').RoleRef;
 const StatusListModel = require('../models').StatusList;
@@ -167,6 +168,25 @@ const controller = {
             const currentUser = await req.user;
             const members = await UserModel.findAll({ where: { departmentId: currentUser.departmentId }, attributes: ['name', 'salary'] });
             return res.status(200).send(members);
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+    },
+    getResolvedTasks: async (req, res) => {
+        try {
+            const currentUser = await req.user;
+            const solvedTasks = await ProjectModel.findAll({ include: { model: ProjectRefModel, where: { departmentId: currentUser.departmentId }, attributes: ['id'], include: { model: TaskModel, where: { status: "Solved" }, attributes: ['name'] } }, attributes: ['name'] });
+            let parsedTasks = [];
+            solvedTasks.forEach(el => {
+                let obj = {};
+                obj.name = el.name;
+                obj.count = 0;
+                el.projectRefs.forEach(ref => {
+                    obj.count += 1;
+                })
+                parsedTasks.push(obj);
+            })
+            return res.status(200).send(parsedTasks);
         } catch (err) {
             return res.status(500).send(err);
         }
