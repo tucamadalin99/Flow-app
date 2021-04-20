@@ -823,7 +823,8 @@ export default {
     ...mapActions(["fetchUsers"]),
   },
   computed: mapGetters(["getUsers", "getUser"]),
-  created() {
+  async created() {
+    await this.fetchUsers();
     const currentUser = this.getUser;
     if (currentUser.isManager || currentUser.isCEO) {
       this.statusChangePermission = true;

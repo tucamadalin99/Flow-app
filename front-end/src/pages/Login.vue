@@ -105,9 +105,6 @@ export default {
             message: `Welcome to Flow`,
           });
           this.fetchUser();
-          this.fetchUsers();
-          this.fetchActivity();
-          this.fetchCurrentTasks();
           this.$router.push("/");
         })
         .catch((err) => {

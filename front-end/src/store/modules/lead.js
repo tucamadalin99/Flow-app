@@ -3,12 +3,14 @@ import Axios from 'axios';
 const state = {
     leadProject: {
     },
-    tasks: []
+    tasks: [],
+    deptMembers: []
 };
 
 const getters = {
     getLeadProject: (state) => state.leadProject,
-    getTasks: (state) => state.tasks
+    getTasks: (state) => state.tasks,
+    getDeptMembers: (state) => state.deptMembers
 };
 
 const actions = {
@@ -27,12 +29,17 @@ const actions = {
             console.log("parsed", parsed);
             commit('setTasks', parsed);
         }
+    },
+    async fetchDeptMembers({ commit }) {
+        const deptResponse = await Axios.get('http://localhost:8081/api/lead/getDeptMembers', { withCredentials: true });
+        commit('setDeptMembers', deptResponse.data);
     }
 };
 
 const mutations = {
     setLeadProject: (state, project) => (state.leadProject = project),
     setTasks: (state, tasks) => (state.tasks = tasks),
+    setDeptMembers: (state, members) => (state.deptMembers = members),
     setVisibleTaskChip: (state, task) => {
         const i = state.tasks.findIndex(t => t.id === task.id)
         state.tasks[i].display = true;

@@ -156,7 +156,9 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </q-page-container>
   </q-layout>
 </template>
@@ -191,6 +193,7 @@ export default {
             icon: "pan_tool",
             message: `See you soon!`,
           });
+          this.$q.cookies.remove("cookieLogin");
           this.$router.push("/login");
         })
         .catch(() => {
@@ -208,27 +211,26 @@ export default {
       "fetchActivity",
       "fetchCurrentTasks",
       "fetchLeadProject",
-      "fetchProjectTasks"
+      "fetchProjectTasks",
     ]),
   },
   computed: mapGetters(["getUser"]),
-  created() {
-    this.fetchUser();
-    this.fetchUsers();
-    this.fetchActivity();
-    this.fetchCurrentTasks();
-  },
-  mounted() {
-    // this.$q.dark.toggle(true);
-
+  async created() {
+    await this.fetchUser();
+    //this.fetchUsers();
+    // this.fetchActivity();
+    //this.fetchCurrentTasks();
     const currentUser = this.getUser;
     console.log(currentUser);
     this.isLead = currentUser.isLead;
     this.isManager = currentUser.isManager;
     if (this.isLead) {
-      this.fetchLeadProject();
-      this.fetchProjectTasks();
+     await this.fetchLeadProject();
+     await this.fetchProjectTasks();
     }
+  },
+  mounted() {
+    // this.$q.dark.toggle(true);
   },
   // beforeMount() {
 

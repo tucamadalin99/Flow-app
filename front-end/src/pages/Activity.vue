@@ -31,7 +31,7 @@
 <script>
 import ActivityCard from "../components/ActivityCard";
 import { ParticlesBg } from "particles-bg-vue";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
   name: "ActivityPage",
   data() {
@@ -40,8 +40,12 @@ export default {
       ok: false,
     };
   },
+  methods: {
+    ...mapActions(["fetchActivity"])
+  },
   computed: mapGetters(["getActivity"]),
-  created() {
+  async created() {
+    await this.fetchActivity();
     this.activities = this.getActivity;
   },
   components: {

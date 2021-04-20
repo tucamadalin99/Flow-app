@@ -16,11 +16,13 @@ const routes = [
   },
   {
     path: '/login',
-    component: () => import('pages/Login.vue')
+    component: () => import('pages/Login.vue'),
+    name: 'login'
   },
   {
     path: '/register',
-    component: () => import('pages/Register.vue')
+    component: () => import('pages/Register.vue'),
+    name: 'register'
   },
   {
     path: '/account',
@@ -76,14 +78,14 @@ const routes = [
     path: '/team',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Team.vue') }
+      { path: '', component: () => import('pages/Lead.vue') }
     ]
   },
   {
     path: '/manager',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      {path: '', component: () => import('pages/Manager.vue')}
+      { path: '', component: () => import('pages/Manager.vue') }
     ]
   }
 

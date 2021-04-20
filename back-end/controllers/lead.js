@@ -74,6 +74,11 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
+    },
+    getDepartmentMembers: async (req, res) => {
+        const currentUser = await req.user;
+        const deptMembers = await UserModel.findAll({ where: { departmentId: currentUser.departmentId } });
+        return res.status(200).send(deptMembers);
     }
 }
 

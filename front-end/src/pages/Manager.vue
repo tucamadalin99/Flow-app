@@ -1,12 +1,16 @@
 <template>
   <div class="q-pa-md all">
-    <div class="pie-container charts" style="width: 400px; height: 400px">
+    <div class="pie-container charts" style="width: 27em; height: 27em">
       <h4 id="pie-title">Total: {{ pieValues.length }}</h4>
       <canvas id="pie" width="400" height="400"></canvas>
     </div>
-    <div class="bar-container charts" style="width: 400px; height: 400px">
+    <div class="bar-container charts" style="width: 27em; height: 27em">
       <h4 id="bar-title">Total: {{ barValues.length }}</h4>
       <canvas id="bar" width="400" height="400"></canvas>
+    </div>
+    <div class="line-container charts" style="width: 27em; height: 27em">
+      <h4 id="line-title">Total: 4</h4>
+      <canvas id="line" width="400" height="400"></canvas>
     </div>
   </div>
 </template>
@@ -19,12 +23,14 @@ export default {
     return {
       pieValues: [],
       barValues: [],
+      lineValues: [],
     };
   },
   created() {},
   mounted() {
     let ctx = document.getElementById("pie");
     let ctx2 = document.getElementById("bar");
+    let ctx3 = document.getElementById("line");
     console.log(ctx);
 
     Axios.get("http://localhost:8081/api/manager/getActivePercentage", {
@@ -109,6 +115,37 @@ export default {
         });
       })
       .catch((err) => console.log(err));
+    Axios.get("http://localhost:8081/api/manager/getResolvedTasks", {
+      withCredentials: true,
+    })
+      .then((response) => {
+        console.log(response.data.map((el) => el.count));
+        let lineChart = new Chart(ctx3, {
+          type: "line",
+          data: {
+            labels: response.data.map((el) => el.name),
+            datasets: [
+              {
+                label: "Percentage of activity",
+                data: response.data.map((el) => el.count),
+                backgroundColor: ["rgba(38, 166, 91, 0.5)"],
+                borderColor: ["rgba(38, 166, 91, 0.5)"],
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: "Activity line",
+              },
+            },
+          },
+        });
+      })
+      .catch((err) => console.log(err));
   },
 };
 </script>
@@ -126,6 +163,6 @@ export default {
   align-items: center;
 }
 .charts {
-  margin-left: 10%;
+  margin-left: 3%;
 }
 </style>

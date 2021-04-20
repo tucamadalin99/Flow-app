@@ -21,11 +21,11 @@ export default function ( /* { ssrContext } */) {
       userActivity,
       lead
     },
-    plugins: [
-      createPersistedState({
-        storage: window.sessionStorage
-      })
-    ],
+    // plugins: [
+    //   createPersistedState({
+    //     storage: window.sessionStorage
+    //   })
+    // ],
     // enable strict mode (adds overhead!)
     // for dev mode only
     strict: process.env.DEV
