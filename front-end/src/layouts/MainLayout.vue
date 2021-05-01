@@ -52,7 +52,25 @@
             </q-item-section>
           </q-item>
 
+          <q-item-label v-if="isLead" header class="text-grey-8">
+            Team Lead</q-item-label
+          >
+          <q-item
+            style="color: #2d6cb5"
+            v-if="isLead"
+            clickable
+            exact
+            to="/team"
+          >
+            <q-item-section avatar>
+              <q-icon name="group_work" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Your Team</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item-label header class="text-grey-8"> Manage </q-item-label>
+
           <!-- <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
@@ -91,15 +109,6 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>Tasks</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item v-if="isLead" clickable exact to="/team">
-            <q-item-section avatar>
-              <q-icon name="group_work" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Your Team</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -225,8 +234,8 @@ export default {
     this.isLead = currentUser.isLead;
     this.isManager = currentUser.isManager;
     if (this.isLead) {
-     await this.fetchLeadProject();
-     await this.fetchProjectTasks();
+      await this.fetchLeadProject();
+      await this.fetchProjectTasks();
     }
   },
   mounted() {

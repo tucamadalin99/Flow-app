@@ -34,7 +34,7 @@ const controller = {
                 await ProjectModel.create(project);
             }
 
-            const roles = ["Member", "Team Lead", "Project Manager", "Ajutor HR", "Ajutor Sales", "Ajutor IT", "Ajutor PR"]
+            const roles = ["PR Member", "IT Back-end Member", "IT Front-end Member", "HR Member", "Sales Member","Team Lead", "Project Manager", "Ajutor HR", "Ajutor Sales", "Ajutor IT", "Ajutor PR"]
             let role = { role: "" };
             for (let i = 0; i < roles.length; i++) {
                 role.role = roles[i];

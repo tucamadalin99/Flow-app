@@ -13,18 +13,19 @@ const controller = {
         try {
             const projectLead = await ProjectModel.findOne({
                 include: {
-                    model: RolesRefModel, attributes: [], where: { userId: currentUser.id, roleId: 2 },
+                    model: RolesRefModel, attributes: [], where: { userId: currentUser.id, roleId: 6 },
                 }
             })
             if (projectLead) {
                 const projectMembers = await RolesRefModel.findAll({
-                    where: { projectId: projectLead.id }, attributes: ['userId']
+                    where: { projectId: projectLead.id }
+                    //, attributes: ['userId']
                 })
                 const parsedResponse = {};
                 parsedResponse.project = projectLead;
                 parsedResponse.members = [];
                 projectMembers.forEach(el => {
-                    parsedResponse.members.push(el.userId)
+                    parsedResponse.members.push(el)
                 })
                 return res.status(200).send(parsedResponse);
             } else {
@@ -35,9 +36,12 @@ const controller = {
             return res.status(500).send(err);
         }
     },
+    getMembers: async (req, res) => {
+
+    },
     addMemberToProject: async (req, res) => {
         const userToBeAdded = {
-            roleId: 1,
+            roleId: req.params.roleId,
             userId: req.params.userId,
             projectId: req.params.projectId
         }
@@ -63,13 +67,13 @@ const controller = {
         const currentUser = await req.user;
         try {
             let tasks = await TaskModel.findAll({
-                include: {model: ProjectRefModel,  where: {projectId: req.params.projectId, departmentId: currentUser.departmentId}}
+                include: { model: ProjectRefModel, where: { projectId: req.params.projectId, departmentId: currentUser.departmentId } }
             })
             if (tasks) {
                 //const members = await ProjectRefModel.findAll({where: {projectId}})
                 return res.status(200).send(tasks);
             } else {
-                return res.status(400).send({message: "Tasks not found"})
+                return res.status(400).send({ message: "Tasks not found" })
             }
         } catch (err) {
             return res.status(500).send(err);

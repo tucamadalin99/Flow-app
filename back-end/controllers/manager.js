@@ -37,7 +37,7 @@ const controller = {
         if (Object.keys(errors).length === 0) {
             RoleRefModel.create(assignment)
                 .then(async () => {
-                    if (parseInt(assignment.roleId) === 2) {
+                    if (parseInt(assignment.roleId) === 6) {
                         const user = await UserModel.findByPk(assignment.userId);
                         await user.update({ isLead: true })
                     }

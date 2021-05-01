@@ -8,7 +8,7 @@ router.get('/getLeadProject', middleware.checkLead, LeadController.getLeadProjec
 router.get('/getTasks/:projectId', middleware.checkLead, LeadController.getProjectTasks);
 router.get('/getDeptMembers', middleware.checkLead, LeadController.getDepartmentMembers);
 
-router.post('/addToProject/:userId/:projectId', middleware.checkLead, LeadController.addMemberToProject);
+router.post('/addToProject/:userId/:projectId/:roleId', middleware.checkLead, LeadController.addMemberToProject);
 router.post('/addLeadTask', middleware.checkLead, ManagerController.addTask);
 router.post('/assignTask', middleware.checkLead, ManagerController.assignToTask);
 
