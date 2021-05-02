@@ -18,12 +18,7 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancel" v-close-popup />
-          <q-btn
-            flat
-            label="Add participant"
-            @click="handleAdd"
-            
-          />
+          <q-btn flat label="Add participant" @click="handleAdd" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -54,12 +49,12 @@
       >
         <q-item-section avatar>
           <q-avatar color="primary" text-color="white">
-            {{ member.name[0] }}{{member.surname[0]}}
+            {{ member.name[0] }}{{ member.surname[0] }}
           </q-avatar>
         </q-item-section>
 
         <q-item-section>
-          <q-item-label>{{ member.name }} {{member.surname}}</q-item-label>
+          <q-item-label>{{ member.name }} {{ member.surname }}</q-item-label>
           <q-item-label caption lines="1">{{ member.email }}</q-item-label>
         </q-item-section>
 
@@ -83,9 +78,23 @@ export default {
   methods: {
     handleAdd() {
       console.log(this.member.value);
-      const assignee = this.members.find(el => el.id === this.member.value);
-      this.assignment.assignedMembers.push(assignee);
-      //todo the rest
+      if (!this.member.value) {
+        this.$q.notify({
+          color: "red-8",
+          textColor: "white",
+          icon: "warning",
+          message: `Please pick a participant from the dropdown`,
+        });
+      } else {
+        const assignee = this.members.find((el) => el.id === this.member.value);
+        this.assignment.assignedMembers.push(assignee);
+        this.$q.notify({
+          color: "indigo-8",
+          textColor: "white",
+          icon: "cloud_done",
+          message: `${assignee.name} ${assignee.surname} added successfully`,
+        });
+      }
     },
   },
   created() {

@@ -207,11 +207,9 @@ export default {
       return `${yyyy}/${mm}/${dd}`;
     },
     handleAddMember() {
-      console.log(this.selectedDropdownUser);
       const newMember = this.deptMembers.find(
         (el) => el.id === this.selectedDropdownUser.value
       );
-      console.log(this.selectedDivision);
       Axios.post(
         `http://localhost:8081/api/lead/addToProject/${newMember.id}/${this.leadProject.project.id}/${this.selectedDivision.value}`,
         {},
@@ -229,7 +227,7 @@ export default {
             .find((el) => el.name === this.selectedDivision.label)
             .members.push(newMember);
         })
-        .catch((err) =>
+        .catch(() =>
           this.$q.notify({
             color: "red-8",
             textColor: "white",
@@ -237,23 +235,49 @@ export default {
             message: `Member already on the project`,
           })
         );
-
-      console.log(newMember, this.leadProject, this.selectedDivision.value);
     },
     addTask() {
       //TODO
-      console.log("adding");
-      const createdTask = {};
-      Object.assign(createdTask, this.task);
-      this.tasks.push(createdTask);
-      this.task = {
-        name: "",
-        type: "",
-        startDate: this.formatDate(new Date()),
-        endDate: this.formatDate(new Date()),
-        projectId: null,
-        assignedMembers: [],
-      };
+      if (!this.task.name || !this.task.type || !this.task.endDate) {
+        this.$q.notify({
+          color: "red-8",
+          textColor: "white",
+          icon: "warning",
+          message: `Make sure you complete all the fields`,
+        });
+      } else {
+        const createdTask = {};
+        this.task.projectId = this.leadProject.project.id;
+        Object.assign(createdTask, this.task);
+        Axios.post(`http://localhost:8081/api/lead/addLeadTask`, createdTask, {
+          withCredentials: true,
+        })
+          .then(() => {
+            this.tasks.push(createdTask);
+            this.task = {
+              name: "",
+              type: "",
+              startDate: this.formatDate(new Date()),
+              endDate: this.formatDate(new Date()),
+              projectId: null,
+              assignedMembers: [],
+            };
+            this.$q.notify({
+              color: "indigo-8",
+              textColor: "white",
+              icon: "cloud_done",
+              message: `${createdTask.name} added successfully`,
+            });
+          })
+          .catch(() => {
+            this.$q.notify({
+              color: "red-8",
+              textColor: "white",
+              icon: "warning",
+              message: `An error has occured...`,
+            });
+          });
+      }
     },
     ...mapMutations([
       "removeUser",
@@ -284,6 +308,9 @@ export default {
   async created() {
     await this.fetchLeadProject();
     await this.fetchDeptMembers();
+    await this.fetchProjectTasks();
+    let currentAssigned = [];
+    console.log("hei", currentAssigned);
     this.leadProject = this.getLeadProject;
     this.deptMembers = this.getDeptMembers;
     this.membersDropdown = this.deptMembers.map((el) => {
@@ -326,11 +353,28 @@ export default {
         }
       });
     }
-    console.log(this.divisionsData);
+    if (this.getTasks) {
+      currentAssigned = this.getTasks;
+    }
+    currentAssigned.forEach((el) => {
+      let task = {};
+      task.name = el.name;
+      task.type = el.type;
+      task.startDate = el.startDate;
+      task.endDate = el.endDate;
+      task.projectId = this.getLeadProject.project.id;
+      task.assignedMembers = [];
+      el.projectRefs.forEach((ref) => {
+        let participant = this.members.find(m => m.id === ref.userId);
+        if(participant){
+          task.assignedMembers.push(participant);
+        }
+      });
+      this.tasks.push(task);
+    });
   },
-  updated() {
-    console.log("updated");
-  },
+  updated() {},
+  mounted() {},
 };
 </script>
 

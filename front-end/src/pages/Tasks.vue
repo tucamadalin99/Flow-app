@@ -41,12 +41,13 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchCurrentTasks"])
+    ...mapActions(["fetchCurrentTasks"]),
   },
   computed: mapGetters(["getCurrentTasks"]),
- async created() {
+  async created() {
     await this.fetchCurrentTasks();
     this.tasks = this.getCurrentTasks;
+    console.log("ce cacat", this.tasks);
   },
   components: {
     ActivityCard,

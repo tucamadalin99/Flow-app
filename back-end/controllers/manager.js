@@ -70,7 +70,7 @@ const controller = {
             startDate: req.body.startDate,
             endDate: req.body.endDate,
             type: req.body.type,
-            status: "In progress"
+            status: "pending"
         }
         let errors = validateManager.task(task)
         if (Object.keys(errors).length === 0) {
