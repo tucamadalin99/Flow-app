@@ -66,6 +66,7 @@
   </div>
 </template>
 <script>
+import Axios from "axios";
 export default {
   props: ["assignment", "members"],
   data() {
@@ -88,12 +89,31 @@ export default {
       } else {
         const assignee = this.members.find((el) => el.id === this.member.value);
         this.assignment.assignedMembers.push(assignee);
-        this.$q.notify({
-          color: "indigo-8",
-          textColor: "white",
-          icon: "cloud_done",
-          message: `${assignee.name} ${assignee.surname} added successfully`,
-        });
+        Axios.post(
+          `http://localhost:8081/api/lead/assignTask`,
+          {
+            projectId: this.assignment.projectId,
+            userId: assignee.id,
+            taskId: this.assignment.id,
+          },
+          { withCredentials: true }
+        )
+          .then(() => {
+            this.$q.notify({
+              color: "indigo-8",
+              textColor: "white",
+              icon: "cloud_done",
+              message: `${assignee.name} ${assignee.surname} added successfully`,
+            });
+          })
+          .catch(() => {
+            this.$q.notify({
+              color: "red-8",
+              textColor: "white",
+              icon: "warning",
+              message: `An error has occured...`,
+            });
+          });
       }
     },
   },
@@ -110,4 +130,6 @@ export default {
   text-align: center;
   display: flex;
 }
+
+
 </style>

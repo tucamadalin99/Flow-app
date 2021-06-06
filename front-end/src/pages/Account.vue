@@ -222,14 +222,16 @@ export default {
       }
     },
     handleUpdate: function () {
-      const names = this.user.fullName.split(" ");
+      let userCopy = {};
+      Object.assign(userCopy, this.user);
+      const names = userCopy.fullName.split(" ");
       const updatedUser = {
         name: names[0],
         surname: names[1],
-        division: this.user.division,
-        role: this.user.role,
-        facebook: this.user.facebook,
-        git: this.user.git,
+        division: userCopy.division,
+        role: userCopy.role,
+        facebook: userCopy.facebook,
+        git: userCopy.git,
       };
       Axios.put("http://localhost:8081/api/user/updateInfo", updatedUser, {
         withCredentials: true,
@@ -255,11 +257,13 @@ export default {
   },
   computed: mapGetters(["getUser"]),
 
-  created() {
+  async created() {
     console.log("before create");
+   await this.fetchUser();
     // console.log(this.user);
     // this.fetchUser();
     this.user = this.getUser;
+    Object.assign(this.user, this.getUser);
   },
 };
 </script>

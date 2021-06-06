@@ -30,6 +30,7 @@ export default function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     const publicRoutes = ['login', 'register']
     const isLoggedIn = Cookies.get("cookieLogin") ? true : false;
+    
     console.log(isLoggedIn);
     if (!isLoggedIn && !publicRoutes.includes(to.name)) {
       next({ name: 'login' })

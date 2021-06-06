@@ -182,6 +182,7 @@ export default {
       addMembersDiag: false,
       addTaskDiag: false,
       task: {
+        id: null,
         name: "",
         type: "",
         startDate: this.formatDate(new Date()),
@@ -358,6 +359,7 @@ export default {
     }
     currentAssigned.forEach((el) => {
       let task = {};
+      task.id = el.id;
       task.name = el.name;
       task.type = el.type;
       task.startDate = el.startDate;
@@ -365,8 +367,8 @@ export default {
       task.projectId = this.getLeadProject.project.id;
       task.assignedMembers = [];
       el.projectRefs.forEach((ref) => {
-        let participant = this.members.find(m => m.id === ref.userId);
-        if(participant){
+        let participant = this.members.find((m) => m.id === ref.userId);
+        if (participant) {
           task.assignedMembers.push(participant);
         }
       });
@@ -396,5 +398,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.task-row {
+  display: flex;
+  justify-content: center;
 }
 </style>

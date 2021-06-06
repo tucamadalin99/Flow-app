@@ -47,7 +47,6 @@ export default {
   async created() {
     await this.fetchCurrentTasks();
     this.tasks = this.getCurrentTasks;
-    console.log("ce cacat", this.tasks);
   },
   components: {
     ActivityCard,
