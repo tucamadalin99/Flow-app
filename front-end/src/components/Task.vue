@@ -1,5 +1,26 @@
 <template>
   <div class="q-pa-md" style="max-width: 350px">
+    <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="warning" color="primary" text-color="white" />
+          <span class="q-ml-sm text-bold"
+            >Removing {{ selectedMember.name }}: Are you sure?</span
+          >
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn
+            flat
+            label="Remove"
+            color="primary"
+            @click="handleRemove"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="addMembersDiag" persistent>
       <q-card style="min-width: 350px">
         <q-card-section>
@@ -24,17 +45,23 @@
     </q-dialog>
     <q-toolbar class="bg-primary text-white shadow-2">
       <q-toolbar-title>{{ assignment.name }}</q-toolbar-title>
-      <q-btn
-        class="q-ma-sm"
-        round
-        color="primary"
-        icon="person_add"
-        @click="addMembersDiag = true"
-      >
-      </q-btn>
     </q-toolbar>
 
     <q-list bordered>
+      <q-item class="action-btns">
+        <q-btn
+          class="q-ma-sm"
+          round
+          color="primary"
+          icon="person_add"
+          @click="addMembersDiag = true"
+        >
+        </q-btn>
+
+        <q-btn class="q-ma-sm" round @click="markResolved" color="green" icon="check"> </q-btn>
+
+        <q-btn class="q-ma-sm" round color="red-8" icon="remove"> </q-btn>
+      </q-item>
       <q-item>
         <p class="text-h6 type">
           {{ assignment.type }} until {{ assignment.endDate }}
@@ -59,7 +86,11 @@
         </q-item-section>
 
         <q-item-section side>
-          <q-icon name="chat_bubble" color="green" />
+          <q-icon
+            name="person_remove"
+            @click.stop="handleRemoveDialog(member)"
+            color="red-8"
+          />
         </q-item-section>
       </q-item>
     </q-list>
@@ -74,11 +105,13 @@ export default {
       addMembersDiag: false,
       member: "Pick participant",
       options: [],
+      confirm: false,
+      selectedMember: {},
+      selectedIndex: -1,
     };
   },
   methods: {
     handleAdd() {
-      console.log(this.member.value);
       if (!this.member.value) {
         this.$q.notify({
           color: "red-8",
@@ -116,6 +149,67 @@ export default {
           });
       }
     },
+    handleRemoveDialog(member) {
+      this.selectedIndex = this.members.indexOf(member);
+      this.selectedMember = member;
+      this.confirm = true;
+      console.log(member);
+      console.log(this.assignment);
+    },
+    handleRemove() {
+      this.assignment.assignedMembers = this.assignment.assignedMembers.filter(
+        (el) => el.name !== this.selectedMember.name
+      );
+      console.log(this.assignment);
+      console.log();
+      const deletion = {
+        userId: this.selectedMember.id,
+        projectId: this.assignment.projectId,
+        taskId: this.assignment.id,
+        departmentId: this.selectedMember.departmentId,
+      };
+      Axios.delete(
+        `http://localhost:8081/api/lead/removeFromTask/${deletion.userId}/${deletion.projectId}/${deletion.taskId}/${deletion.departmentId}`,
+        {
+          withCredentials: true,
+        }
+      )
+        .then(() => {
+          this.$q.notify({
+            color: "indigo-8",
+            textColor: "white",
+            icon: "cloud_done",
+            message: `${this.selectedMember.name} was removed to the task`,
+          });
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: "red-8",
+            textColor: "white",
+            icon: "error",
+            message: `Some error occured...`,
+          });
+        });
+    },
+    markResolved(){
+      Axios.put(`http://localhost:8081/api/user/markResolved/${this.assignment.id}`, {}, {withCredentials: true}).then(() => {
+          this.$q.notify({
+            color: "indigo-8",
+            textColor: "white",
+            icon: "cloud_done",
+            message: `Task was resolved`,
+          });
+          document.querySelector('.type').textContent = "Resolved";
+      })
+      .catch(() => {
+        this.$q.notify({
+            color: "red-8",
+            textColor: "white",
+            icon: "error",
+            message: `Some error occured...`,
+          });
+      })
+    }
   },
   created() {
     this.options = this.members.map((el) => {
@@ -127,9 +221,11 @@ export default {
 </script>
 <style scoped>
 .type {
+  width:100%;
   text-align: center;
-  display: flex;
 }
-
-
+.action-btns {
+  display: flex;
+  justify-content: center;
+}
 </style>

@@ -14,5 +14,6 @@ router.post('/assignTask', middleware.checkLead, ManagerController.assignToTask)
 
 router.delete('/removeFromProject/:userId', middleware.checkLead, LeadController.removeMemberFromProject);
 router.delete('/removeTaskLead/:taskId', middleware.checkLead, ManagerController.removeTask);
+router.delete('/removeFromTask/:userId/:projectId/:taskId/:departmentId', middleware.checkLead, LeadController.removeFromTask);
 
 module.exports = router;

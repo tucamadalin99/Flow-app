@@ -31,7 +31,7 @@
         style="height: 150px"
         class="avatar-bg"
       >
-        <div class="absolute-bottom bg-transparent">
+        <div @click="goToProfile" class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
           </q-avatar>
@@ -71,11 +71,6 @@
           </q-item>
           <q-item-label header class="text-grey-8"> Manage </q-item-label>
 
-          <!-- <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        /> -->
           <q-item clickable exact to="/account">
             <q-item-section avatar>
               <q-icon name="person" />
@@ -175,13 +170,12 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import Axios from "axios";
+
 export default {
   name: "MainLayout",
-  // components: { EssentialLink },
   data() {
     return {
       leftDrawerOpen: false,
-      // essentialLinks: linksData,
       dark: false,
       isLead: false,
       isManager: false,
@@ -214,6 +208,11 @@ export default {
           });
         });
     },
+    goToProfile() {
+      if (this.$router.currentRoute.fullPath !== "/account") {
+        this.$router.push("/account");
+      }
+    },
     ...mapActions([
       "fetchUser",
       "fetchUsers",
@@ -226,11 +225,7 @@ export default {
   computed: mapGetters(["getUser"]),
   async created() {
     await this.fetchUser();
-    //this.fetchUsers();
-    // this.fetchActivity();
-    //this.fetchCurrentTasks();
     const currentUser = this.getUser;
-    console.log(currentUser);
     this.isLead = currentUser.isLead;
     this.isManager = currentUser.isManager;
     if (this.isLead) {
@@ -238,16 +233,7 @@ export default {
       await this.fetchProjectTasks();
     }
   },
-  mounted() {
-    // this.$q.dark.toggle(true);
-  },
-  // beforeMount() {
-
-  //   if (currentUser.isLead) {
-  //     this.isLead = true;
-  //     this.fetchLeadProject();
-  //   }
-  // },
+  mounted() {},
 };
 </script>
 <style scoped>
@@ -266,5 +252,9 @@ export default {
   height: 40px;
   position: relative;
   top: 4px;
+}
+
+.bg-transparent:hover {
+  cursor: pointer;
 }
 </style>

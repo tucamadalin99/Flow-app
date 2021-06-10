@@ -372,6 +372,7 @@ export default {
           task.assignedMembers.push(participant);
         }
       });
+      if(el.status !== "resolved")
       this.tasks.push(task);
     });
   },

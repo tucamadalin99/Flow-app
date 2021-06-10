@@ -5,9 +5,6 @@ const RolesRefModel = require('../models').RoleRef;
 const TaskModel = require('../models').Task;
 
 const controller = {
-    // assignToProject: async (req, res) => {
-    //     const userToAssign = 
-    // }
     getLeadProject: async (req, res) => {
         const currentUser = await req.user;
         try {
@@ -19,7 +16,6 @@ const controller = {
             if (projectLead) {
                 const projectMembers = await RolesRefModel.findAll({
                     where: { projectId: projectLead.id }
-                    //, attributes: ['userId']
                 })
                 const parsedResponse = {};
                 parsedResponse.project = projectLead;
@@ -63,6 +59,28 @@ const controller = {
         }
 
     },
+    removeFromTask: async (req, res) => {
+        let currentUser = await req.user;
+        let resignment = {
+            userId: req.params.userId,
+            projectId: req.params.projectId,
+            taskId: req.params.taskId,
+            departmentId: currentUser.departmentId
+        }
+
+        try {
+            let foundTask = await ProjectRefModel.findOne({ where: { userId: resignment.userId } });
+            if (foundTask) {
+                foundTask.destroy()
+                    .then(() => res.status(200).send({ message: "User resigned from the selected task" }))
+                    .catch((err) => res.status(500).send(err));
+            } else {
+                return res.status(400).send({ message: "Task or project not found in your account" })
+            }
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+    },
     getProjectTasks: async (req, res) => {
         const currentUser = await req.user;
         try {
@@ -70,7 +88,6 @@ const controller = {
                 include: { model: ProjectRefModel, where: { projectId: req.params.projectId, departmentId: currentUser.departmentId } }
             })
             if (tasks) {
-                //const members = await ProjectRefModel.findAll({where: {projectId}})
                 return res.status(200).send(tasks);
             } else {
                 return res.status(400).send({ message: "Tasks not found" })

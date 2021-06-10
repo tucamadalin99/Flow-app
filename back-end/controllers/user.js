@@ -151,7 +151,6 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
-
     },
 
     getActivity: async (req, res) => {
