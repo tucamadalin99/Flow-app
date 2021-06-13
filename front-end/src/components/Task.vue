@@ -58,9 +58,23 @@
         >
         </q-btn>
 
-        <q-btn class="q-ma-sm" round @click="markResolved" color="green" icon="check"> </q-btn>
+        <q-btn
+          class="q-ma-sm"
+          round
+          @click="markResolved"
+          color="green"
+          icon="check"
+        >
+        </q-btn>
 
-        <q-btn class="q-ma-sm" round color="red-8" icon="remove"> </q-btn>
+        <q-btn
+          @click="deleteTask"
+          class="q-ma-sm"
+          round
+          color="red-8"
+          icon="remove"
+        >
+        </q-btn>
       </q-item>
       <q-item>
         <p class="text-h6 type">
@@ -107,6 +121,7 @@ export default {
       options: [],
       confirm: false,
       selectedMember: {},
+      currentIndex: 0,
       selectedIndex: -1,
     };
   },
@@ -120,33 +135,48 @@ export default {
           message: `Please pick a participant from the dropdown`,
         });
       } else {
-        const assignee = this.members.find((el) => el.id === this.member.value);
-        this.assignment.assignedMembers.push(assignee);
-        Axios.post(
-          `http://localhost:8081/api/lead/assignTask`,
-          {
-            projectId: this.assignment.projectId,
-            userId: assignee.id,
-            taskId: this.assignment.id,
-          },
-          { withCredentials: true }
-        )
-          .then(() => {
-            this.$q.notify({
-              color: "indigo-8",
-              textColor: "white",
-              icon: "cloud_done",
-              message: `${assignee.name} ${assignee.surname} added successfully`,
-            });
-          })
-          .catch(() => {
-            this.$q.notify({
-              color: "red-8",
-              textColor: "white",
-              icon: "warning",
-              message: `An error has occured...`,
-            });
+        if (
+          this.assignment.assignedMembers.find(
+            (el) => el.id === this.member.value
+          )
+        ) {
+          this.$q.notify({
+            color: "red-8",
+            textColor: "white",
+            icon: "warning",
+            message: `User already on this task!`,
           });
+        } else {
+          const assignee = this.members.find(
+            (el) => el.id === this.member.value
+          );
+          this.assignment.assignedMembers.push(assignee);
+          Axios.post(
+            `http://localhost:8081/api/lead/assignTask`,
+            {
+              projectId: this.assignment.projectId,
+              userId: assignee.id,
+              taskId: this.assignment.id,
+            },
+            { withCredentials: true }
+          )
+            .then(() => {
+              this.$q.notify({
+                color: "indigo-8",
+                textColor: "white",
+                icon: "cloud_done",
+                message: `${assignee.name} ${assignee.surname} added successfully`,
+              });
+            })
+            .catch(() => {
+              this.$q.notify({
+                color: "red-8",
+                textColor: "white",
+                icon: "warning",
+                message: `An error has occured...`,
+              });
+            });
+        }
       }
     },
     handleRemoveDialog(member) {
@@ -191,37 +221,65 @@ export default {
           });
         });
     },
-    markResolved(){
-      Axios.put(`http://localhost:8081/api/user/markResolved/${this.assignment.id}`, {}, {withCredentials: true}).then(() => {
+    markResolved() {
+      Axios.put(
+        `http://localhost:8081/api/user/markResolved/${this.currentIndex}`,
+        {},
+        { withCredentials: true }
+      )
+        .then(() => {
           this.$q.notify({
             color: "indigo-8",
             textColor: "white",
             icon: "cloud_done",
-            message: `Task was resolved`,
+            message: `Task was resolved, it will be cleared at the next access!`,
           });
-          document.querySelector('.type').textContent = "Resolved";
-      })
-      .catch(() => {
-        this.$q.notify({
+          this.$emit("clicked", this.currentIndex);
+        })
+        .catch(() => {
+          this.$q.notify({
             color: "red-8",
             textColor: "white",
             icon: "error",
             message: `Some error occured...`,
           });
-      })
-    }
+        });
+    },
+    deleteTask() {
+      Axios.delete(
+        `http://localhost:8081/api/lead/removeTaskLead/${this.currentIndex}`,
+        { withCredentials: true }
+      )
+        .then(() => {
+          this.$q.notify({
+            color: "yellow-8",
+            textColor: "white",
+            icon: "cloud_done",
+            message: `Task was removed`,
+          });
+          this.$emit("clicked", this.currentIndex);
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: "red-8",
+            textColor: "white",
+            icon: "error",
+            message: `Some error occured...`,
+          });
+        });
+    },
   },
   created() {
     this.options = this.members.map((el) => {
       return { label: `${el.name} ${el.surname}`, value: el.id };
     });
-    console.log(this.options);
+    this.currentIndex = this.assignment.id;
   },
 };
 </script>
 <style scoped>
 .type {
-  width:100%;
+  width: 100%;
   text-align: center;
 }
 .action-btns {

@@ -60,12 +60,11 @@ const controller = {
 
     },
     removeFromTask: async (req, res) => {
-        let currentUser = await req.user;
         let resignment = {
             userId: req.params.userId,
             projectId: req.params.projectId,
             taskId: req.params.taskId,
-            departmentId: currentUser.departmentId
+            departmentId: req.params.departmentId,
         }
 
         try {

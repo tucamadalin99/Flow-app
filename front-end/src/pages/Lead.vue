@@ -107,10 +107,115 @@
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="one">
           <div class="info-container">
-            <p class="text-bold">
-              Start date: {{ leadProject.project.startDate }}
-            </p>
-            <p class="text-bold">End date: {{ leadProject.project.endDate }}</p>
+            <div class="q-pa-md list-container" style="max-width: 500px">
+              <q-list bordered>
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-avatar
+                      rounded
+                      color="primary"
+                      text-color="white"
+                      icon="event"
+                    />
+                  </q-item-section>
+
+                  <q-item-section
+                    >Starts on
+                    <span style="font-weight: bold">{{
+                      leadProject.project.startDate
+                    }}</span></q-item-section
+                  >
+                </q-item>
+
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-avatar
+                      rounded
+                      color="primary"
+                      text-color="white"
+                      icon="event_available"
+                    />
+                  </q-item-section>
+
+                  <q-item-section
+                    >Ends on
+                    <span style="font-weight: bold">{{
+                      leadProject.project.endDate
+                    }}</span></q-item-section
+                  >
+                </q-item>
+
+                <q-separator />
+
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-avatar
+                      rounded
+                      color="red-8"
+                      text-color="white"
+                      icon="attach_money"
+                    />
+                  </q-item-section>
+
+                  <q-item-section
+                    >Cost:
+                    <span style="font-weight: bold"
+                      >{{ leadProject.project.cost }} RON</span
+                    ></q-item-section
+                  >
+                </q-item>
+
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-avatar
+                      rounded
+                      color="green-8"
+                      text-color="white"
+                      icon="attach_money"
+                    />
+                  </q-item-section>
+
+                  <q-item-section
+                    >Income:
+                    <span style="font-weight: bold"
+                      >{{ leadProject.project.ca }} RON</span
+                    ></q-item-section
+                  >
+                </q-item>
+
+                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                    <q-avatar
+                      rounded
+                      color="primary"
+                      text-color="white"
+                      icon="flag"
+                    />
+                  </q-item-section>
+
+                  <q-item-section
+                    >Profit/Loss:
+                    <span style="font-weight: bold"
+                      >{{ leadProject.project.ca - leadProject.project.cost }} RON</span
+                    ></q-item-section
+                  >
+                </q-item>
+
+                <q-separator />
+                                <q-item clickable v-ripple>
+                  <q-item-section avatar>
+                     <q-avatar
+                      rounded
+                      color="primary"
+                      text-color="white"
+                      icon="people"
+                    />
+                  </q-item-section>
+                  <q-item-section>Member count: <span style="font-weight:bold">{{leadProject.members.length}}</span></q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+
           </div>
         </q-tab-panel>
         <q-tab-panel name="two">
@@ -146,14 +251,21 @@
               @click="addTaskDiag = true"
             >
             </q-btn>
-            <div class="row task-row">
+            <div v-if="tasks.length > 0" class="row task-row">
               <Task
+                @clicked="onClickChild"
                 v-for="task in tasks"
                 :key="task.name"
                 :assignment="task"
                 :members="members"
                 class="col"
               />
+            </div>
+            <div v-else class="no-tasks">
+              <h4>
+                No tasks added yet...
+                <span><q-icon name="sentiment_dissatisfied"></q-icon></span>
+              </h4>
             </div>
           </div>
         </q-tab-panel>
@@ -247,15 +359,17 @@ export default {
           message: `Make sure you complete all the fields`,
         });
       } else {
-        const createdTask = {};
+        let createdTask = {};
         this.task.projectId = this.leadProject.project.id;
         Object.assign(createdTask, this.task);
         Axios.post(`http://localhost:8081/api/lead/addLeadTask`, createdTask, {
           withCredentials: true,
         })
-          .then(() => {
+          .then((response) => {
+            createdTask.id = response.data.taskId;
             this.tasks.push(createdTask);
             this.task = {
+              id: null,
               name: "",
               type: "",
               startDate: this.formatDate(new Date()),
@@ -279,6 +393,9 @@ export default {
             });
           });
       }
+    },
+    onClickChild(value) {
+      this.tasks = this.tasks.filter((el) => el.id !== value);
     },
     ...mapMutations([
       "removeUser",
@@ -372,9 +489,9 @@ export default {
           task.assignedMembers.push(participant);
         }
       });
-      if(el.status !== "resolved")
-      this.tasks.push(task);
+      if (el.status !== "resolved") this.tasks.push(task);
     });
+    console.log("all", this.leadProject);
   },
   updated() {},
   mounted() {},
@@ -384,6 +501,9 @@ export default {
 <style scoped>
 .info-container {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .team-container {
   text-align: center;
@@ -404,5 +524,9 @@ export default {
 .task-row {
   display: flex;
   justify-content: center;
+}
+
+.list-container {
+  width: 100%;
 }
 </style>
