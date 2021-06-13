@@ -12,17 +12,17 @@ const controller = {
         const currentUser = await req.user;
         const userFound = await UserModel.findOne({
             where: {
-                email: req.body.email,
+                id: req.body.id,
                 departmentId: currentUser.departmentId
             }
         })
         if (userFound) {
-            userFound.update({ salary: req.body.salary }).then(() => {
+            userFound.update({ salary: req.body.salary, role: req.body.role }).then(() => {
                 res.status(200).send({ message: `${userFound.name} ${userFound.surname} salary adjusted to ${req.body.salary}.` })
             }).catch(err => { res.status(500).send(err) })
         }
         else {
-            res.status(400).send({ message: "No user found with this email in your department" });
+            res.status(400).send({ message: "No user found with this id in your department" });
         }
     },
 
@@ -166,7 +166,7 @@ const controller = {
     getSalaryData: async (req, res) => {
         try {
             const currentUser = await req.user;
-            const members = await UserModel.findAll({ where: { departmentId: currentUser.departmentId }, attributes: ['name', 'salary'] });
+            const members = await UserModel.findAll({ where: { departmentId: currentUser.departmentId }, attributes: ['id', 'name', 'surname', 'role', 'salary'] });
             return res.status(200).send(members);
         } catch (err) {
             return res.status(500).send(err);

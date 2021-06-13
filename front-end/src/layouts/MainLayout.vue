@@ -116,6 +116,15 @@
             </q-item-section>
           </q-item>
 
+          <q-item v-if="isManager" clickable exact to="/salaries">
+            <q-item-section avatar>
+              <q-icon name="attach_money" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Salaries Data</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <q-item-label header class="text-grey-8"> Contact </q-item-label>
 
           <q-item clickable exact to="/contacts">
