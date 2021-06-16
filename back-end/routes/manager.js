@@ -8,6 +8,7 @@ router.post('/addTask', middleware.checkManager, ManagerController.addTask);
 router.put('/modifySalary', middleware.checkManager, ManagerController.modifySalary);
 router.put('/changeStatus', middleware.checkManager, ManagerController.changeStatus);
 router.post('/assignToProject', middleware.checkManager, ManagerController.assignRoleOnProject);
+router.get('/getAllProjects', middleware.checkManager, ManagerController.getAllProjectsAndTasks);
 
 
 router.get('/collectEmployeeData', middleware.checkManager, ManagerController.collectUserDataFromDepartment);

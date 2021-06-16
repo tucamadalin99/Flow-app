@@ -190,7 +190,19 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
-    }
+    },
+
+    getAllProjectsAndTasks: async (req, res) => {
+        try {
+            let all = await ProjectModel.findAll({
+                include: { model: ProjectRefModel, attributes: ['id'], include: { model: TaskModel } }
+            });
+            return res.status(200).send(all);
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+    },
+
 
 }
 

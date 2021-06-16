@@ -95,6 +95,7 @@ const controller = {
             return res.status(500).send(err);
         }
     },
+
     getDepartmentMembers: async (req, res) => {
         const currentUser = await req.user;
         const deptMembers = await UserModel.findAll({ where: { departmentId: currentUser.departmentId } });

@@ -107,6 +107,15 @@
             </q-item-section>
           </q-item>
 
+          <q-item clickable exact to="/gantt">
+            <q-item-section avatar>
+              <q-icon name="account_tree" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Planning</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <q-item v-if="isManager" clickable exact to="/manager">
             <q-item-section avatar>
               <q-icon name="work" />

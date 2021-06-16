@@ -95,6 +95,13 @@ const routes = [
       { path: '', component: () => import('pages/Salary.vue') }
     ]
   },
+  {
+    path: '/gantt',
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: '', component: () => import('pages/Gantt.vue') }
+    ]
+  }
 
 ]
 
