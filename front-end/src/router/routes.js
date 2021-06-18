@@ -101,6 +101,13 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Gantt.vue') }
     ]
+  },
+  {
+    path: '/flow',
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: '', component: () => import('pages/Flow.vue') }
+    ]
   }
 
 ]

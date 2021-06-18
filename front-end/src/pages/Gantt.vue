@@ -15,7 +15,6 @@
 import "@progress/kendo-ui";
 import "@progress/kendo-theme-default/dist/all.css";
 import { Gantt } from "@progress/kendo-gantt-vue-wrapper";
-
 export default {
   name: "Gantt",
   components: {
@@ -118,3 +117,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.k-task-template {
+  background-color: green;
+}
+</style>

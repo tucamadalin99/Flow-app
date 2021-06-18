@@ -10,6 +10,8 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@hipsjs/flowy-vue": "^1.0.13",
+    "@progress/kendo-datasource-vue-wrapper": "^2021.2.617",
     "@progress/kendo-gantt-vue-wrapper": "^2021.2.616",
     "@progress/kendo-theme-default": "^4.39.0",
     "@progress/kendo-ui": "^2021.2.616",
@@ -39,6 +41,7 @@
     "eslint-config-prettier": "^6.9.0",
     "eslint-loader": "^3.0.3",
     "eslint-plugin-vue": "^6.1.2",
+    "quasar-app-extension-flowy": "^1.0.5",
     "vue-particles": "^1.0.9",
     "workbox-webpack-plugin": "^5.1.4"
   },

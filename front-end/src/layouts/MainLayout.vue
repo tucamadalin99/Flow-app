@@ -109,10 +109,19 @@
 
           <q-item clickable exact to="/gantt">
             <q-item-section avatar>
-              <q-icon name="account_tree" />
+              <q-icon name="insights" />
             </q-item-section>
             <q-item-section>
               <q-item-label>Planning</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable exact to="/flow">
+            <q-item-section avatar>
+              <q-icon name="account_tree" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Draw Flow Chart</q-item-label>
             </q-item-section>
           </q-item>
 
