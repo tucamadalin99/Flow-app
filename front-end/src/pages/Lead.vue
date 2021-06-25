@@ -196,26 +196,33 @@
                   <q-item-section
                     >Profit/Loss:
                     <span style="font-weight: bold"
-                      >{{ leadProject.project.ca - leadProject.project.cost }} RON</span
+                      >{{
+                        leadProject.project.ca - leadProject.project.cost
+                      }}
+                      RON</span
                     ></q-item-section
                   >
                 </q-item>
 
                 <q-separator />
-                                <q-item clickable v-ripple>
+                <q-item clickable v-ripple>
                   <q-item-section avatar>
-                     <q-avatar
+                    <q-avatar
                       rounded
                       color="primary"
                       text-color="white"
                       icon="people"
                     />
                   </q-item-section>
-                  <q-item-section>Member count: <span style="font-weight:bold">{{leadProject.members.length}}</span></q-item-section>
+                  <q-item-section
+                    >Member count:
+                    <span style="font-weight: bold">{{
+                      leadProject.members.length
+                    }}</span></q-item-section
+                  >
                 </q-item>
               </q-list>
             </div>
-
           </div>
         </q-tab-panel>
         <q-tab-panel name="two">
@@ -258,6 +265,7 @@
                 :key="task.name"
                 :assignment="task"
                 :members="members"
+                :leadProject="leadProject"
                 class="col"
               />
             </div>

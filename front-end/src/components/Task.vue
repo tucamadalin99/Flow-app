@@ -113,8 +113,9 @@
 <script>
 import Axios from "axios";
 import emailjs from "emailjs-com";
+import { mapGetters } from "vuex";
 export default {
-  props: ["assignment", "members"],
+  props: ["assignment", "members", "leadProject"],
   data() {
     return {
       addMembersDiag: false,
@@ -124,6 +125,7 @@ export default {
       selectedMember: {},
       currentIndex: 0,
       selectedIndex: -1,
+      emailingUser: {},
     };
   },
   methods: {
@@ -162,11 +164,13 @@ export default {
             { withCredentials: true }
           )
             .then(() => {
-              const email = {
+              let email = {
                 to_name: `${assignee.name} ${assignee.surname}`,
-                from_name: "Ciurea",
-                message: `Your new task is: ${this.assignment.name}`,
-                email: "cezu.98@gmail.com",
+                from_name: `${this.emailingUser.fullName}`,
+                project: `${this.leadProject.project.name}`,
+                message: `Your new task is: ${this.assignment.name}, belonging to the ${this.leadProject.project.name} project. 
+                          Access your Tasks section from the Flow account for additional details`,
+                email: "maad368@gmail.com",
               };
               emailjs
                 .send(
@@ -290,11 +294,13 @@ export default {
         });
     },
   },
+  computed: mapGetters(["getUser"]),
   created() {
     this.options = this.members.map((el) => {
       return { label: `${el.name} ${el.surname}`, value: el.id };
     });
     this.currentIndex = this.assignment.id;
+    this.emailingUser = this.getUser;
   },
 };
 </script>
