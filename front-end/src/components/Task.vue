@@ -112,6 +112,7 @@
 </template>
 <script>
 import Axios from "axios";
+import emailjs from "emailjs-com";
 export default {
   props: ["assignment", "members"],
   data() {
@@ -161,12 +162,32 @@ export default {
             { withCredentials: true }
           )
             .then(() => {
-              this.$q.notify({
-                color: "indigo-8",
-                textColor: "white",
-                icon: "cloud_done",
-                message: `${assignee.name} ${assignee.surname} added successfully`,
-              });
+              const email = {
+                to_name: `${assignee.name} ${assignee.surname}`,
+                from_name: "Ciurea",
+                message: `Your new task is: ${this.assignment.name}`,
+                email: "cezu.98@gmail.com",
+              };
+              emailjs
+                .send(
+                  "service_x7kx7af",
+                  "template_jnzdzu9",
+                  email,
+                  "user_3UWke7M5FbVj1uHRdaApi"
+                )
+                .then(
+                  (result) => {
+                    this.$q.notify({
+                      color: "indigo-8",
+                      textColor: "white",
+                      icon: "cloud_done",
+                      message: `${assignee.name} ${assignee.surname} added successfully`,
+                    });
+                  },
+                  (error) => {
+                    console.log("FAILED...", error);
+                  }
+                );
             })
             .catch(() => {
               this.$q.notify({

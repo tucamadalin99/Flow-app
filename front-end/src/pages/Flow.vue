@@ -37,6 +37,7 @@
           :nodes="nodes"
           :beforeMove="beforeMove"
           :beforeAdd="beforeAdd"
+          :edit="edit"
           @add="add"
           @move="move"
           @remove="remove"
@@ -60,7 +61,7 @@ const DemoNode = {
       text: "This is component A",
     };
   },
-  props: ["remove", "node", "title", "description"],
+  props: ["edit", "remove", "node", "title", "description", "id"],
   template: `
     <q-card flat bordered class="my-card bg-white q-pa-md">
       <div class="row items-center no-wrap">
@@ -76,7 +77,10 @@ const DemoNode = {
       </div>
 
       <div class="q-py-md" v-html="description"/>
-      <q-btn color="primary" class="q-pa-none" no-caps @click="remove()">Remove</q-btn>
+      <div class="btns-container">
+      <q-btn color="primary" class="q-pa-none remove-btn" no-caps @click="remove()">Remove</q-btn>
+      <q-btn color="primary" class="q-pa-none edit-btn" no-caps @click="edit()">Edit</q-btn>
+      </div>
     </q-card>
   `,
 };
@@ -117,7 +121,17 @@ export default {
         node: {
           title: "New visitor",
           description:
-            "<span>When a <b>new visitor</b> goes to <b>Site 1</span></span>",
+            "<span>When a <b>new visitor</b> goes to <b>a section</span></span>",
+        },
+      },
+      {
+        preview: {
+          title: "Event",
+        },
+        node: {
+          title: "Event triggered",
+          description:
+            "<span>When a <b>new visitor</b> triggers <b>an event</span></span>",
         },
       },
       {
@@ -129,6 +143,17 @@ export default {
           title: "Update database",
           description:
             "<span>Triggers when somebody performs a <b>specified action</b></span>",
+        },
+      },
+      {
+        preview: {
+          title: "Input Form",
+          icon: "error",
+        },
+        node: {
+          title: "Form Event",
+          description:
+            "<span>User completes <b>specified form</b></span>",
         },
       },
       {
@@ -179,6 +204,7 @@ export default {
         parentId: "1",
         nodeComponent: "demo-node",
         data: {
+          id: 3,
           text: "Parent block",
           title: "New Visitor",
           description:
@@ -273,7 +299,7 @@ export default {
     add(event) {
       // every node needs an ID
       const id = this.generateId();
-
+      event.node.data.id = id;
       // add to array of nodes
       this.nodes.push({
         id,
@@ -283,6 +309,9 @@ export default {
     onDragStart(event) {
       console.log("onDragStart", event);
       this.dragging = true;
+    },
+    edit() {
+      console.log("edit");
     },
   },
   watch: {},
@@ -302,5 +331,17 @@ export default {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.btns-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  .remove-btn,
+  .edit-btn {
+    width: 80px;
+  }
 }
 </style>
