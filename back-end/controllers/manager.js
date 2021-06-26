@@ -175,7 +175,8 @@ const controller = {
     getResolvedTasks: async (req, res) => {
         try {
             const currentUser = await req.user;
-            const solvedTasks = await ProjectModel.findAll({ include: { model: ProjectRefModel, where: { departmentId: currentUser.departmentId }, attributes: ['id'], include: { model: TaskModel, where: { status: "resolved" }, attributes: ['name'] } }, attributes: ['name'] });
+            const solvedTasks = await ProjectModel.findAll(
+                { include: { model: ProjectRefModel, where: { departmentId: currentUser.departmentId }, attributes: ['id'], include: { model: TaskModel, where: { status: "resolved" }, attributes: ['name'] } }, attributes: ['name'] });
             let parsedTasks = [];
             solvedTasks.forEach(el => {
                 let obj = {};

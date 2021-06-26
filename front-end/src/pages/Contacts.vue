@@ -145,7 +145,7 @@
                           </q-item-section>
                         </q-item>
                         <q-item>
-                          <q-item-section>
+                          <q-item-section @click="toggleMailArea">
                             <q-item-label class="q-pb-xs">Email</q-item-label>
                             <!-- <q-input
                               dense
@@ -153,6 +153,7 @@
                               v-model="editedItem.email"
                             /> -->
                             <q-chip
+                              class="email-section"
                               color="primary"
                               text-color="white"
                               icon="email"
@@ -160,6 +161,33 @@
                             >
                               {{ editedItem.email }}
                             </q-chip>
+                          </q-item-section>
+                        </q-item>
+                        <q-item v-if="isEmailActive">
+                          <q-item-section>
+                            <div class="q-pa-md email-container">
+                              <q-input
+                                v-model="emailText"
+                                filled
+                                type="textarea"
+                              />
+                              <div class="email-btns-container">
+                                <q-btn
+                                  @click="sendMail"
+                                  class="q-mt-md"
+                                  label="Send"
+                                  color="green-8"
+                                  icon="send"
+                                ></q-btn>
+                                <q-btn
+                                  @click="toggleMailArea"
+                                  class="q-mt-md q-ml-md"
+                                  label="Exit"
+                                  color="red-8"
+                                  icon="cancel"
+                                ></q-btn>
+                              </div>
+                            </div>
                           </q-item-section>
                         </q-item>
                         <q-item>
@@ -424,7 +452,11 @@
 
           <template v-slot:item="props">
             <div
-              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+              class="
+                q-pa-xs
+                col-xs-12 col-sm-6 col-md-4 col-lg-3
+                grid-style-transition
+              "
               :style="props.selected ? 'transform: scale(0.95);' : ''"
             >
               <q-card :class="props.selected ? 'bg-grey-2' : ''">
@@ -496,6 +528,7 @@
 import { mapGetters, mapActions } from "vuex";
 import Axios from "axios";
 import { exportFile } from "quasar";
+import emailjs from "emailjs-com";
 
 function wrapCsvValue(val, formatFn) {
   let formatted = formatFn !== void 0 ? formatFn(val) : val;
@@ -519,6 +552,9 @@ export default {
       statusChangePermission: false,
       inFs: false,
       tasksLength: 0,
+      isEmailActive: false,
+      emailText: "",
+      emailingUser: {},
       columns: [
         // { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
         // { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
@@ -629,6 +665,51 @@ export default {
     };
   },
   methods: {
+    sendMail() {
+      let email = {
+        from_name: `${this.emailingUser.fullName}`,
+        message: this.emailText,
+        email: "maad368@gmail.com",
+      };
+      if (email.message && email.message.length > 5) {
+        emailjs
+          .send(
+            "service_x7kx7af",
+            "template_tbmbkvt",
+            email,
+            "user_3UWke7M5FbVj1uHRdaApi"
+          )
+          .then(
+            (result) => {
+              this.$q.notify({
+                color: "indigo-8",
+                textColor: "white",
+                icon: "cloud_done",
+                message: `Email sent!`,
+              });
+              this.isEmailActive = false;
+            },
+            (error) => {
+              this.$q.notify({
+                color: "red-8",
+                textColor: "white",
+                icon: "warning",
+                message: `An error has occured and the email was not sent`,
+              });
+            }
+          );
+      } else {
+        this.$q.notify({
+          color: "red-8",
+          textColor: "white",
+          icon: "warning",
+          message: `Make sure you don't send an empty and useless email!`,
+        });
+      }
+    },
+    toggleMailArea() {
+      this.isEmailActive = !this.isEmailActive;
+    },
     editRow(props) {
       this.noti();
       // do something
@@ -826,6 +907,7 @@ export default {
   async created() {
     await this.fetchUsers();
     const currentUser = this.getUser;
+    this.emailingUser = this.getUser;
     if (currentUser.isManager || currentUser.isCEO) {
       this.statusChangePermission = true;
     }
@@ -862,6 +944,16 @@ td:hover {
   color: white;
 }
 
+.email-section:hover {
+  cursor: pointer;
+}
+
+.email-btns-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
 @media only screen and (max-width: 600px) {
   .filters {
     margin: 2%;
@@ -879,6 +971,12 @@ td:hover {
 
   .export-btn {
     margin-left: 6px;
+  }
+
+  .email-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 </style>
