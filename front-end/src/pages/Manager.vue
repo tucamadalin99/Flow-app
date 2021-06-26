@@ -1,17 +1,20 @@
 <template>
-  <div class="q-pa-md all">
-    <div class="pie-container charts" style="width: 27em; height: 27em">
-      <h4 id="pie-title">Total: {{ pieValues.length }}</h4>
-      <canvas id="pie" width="400" height="400"></canvas>
+  <div class="page-container">
+    <h2 class="page-title">Department Statistics</h2>
+    <div class="q-pa-md all">
+      <div class="pie-container charts" style="width: 27em; height: 27em">
+        <canvas id="pie" width="400" height="400"></canvas>
+      </div>
+      <div class="bar-container charts" style="width: 27em; height: 27em">
+        <canvas id="bar" width="400" height="400"></canvas>
+      </div>
+      <div class="line-container charts" style="width: 27em; height: 27em">
+        <canvas id="line" width="400" height="400"></canvas>
+      </div>
     </div>
-    <div class="bar-container charts" style="width: 27em; height: 27em">
-      <h4 id="bar-title">Total: {{ barValues.length }}</h4>
-      <canvas id="bar" width="400" height="400"></canvas>
-    </div>
-    <div class="line-container charts" style="width: 27em; height: 27em">
-      <h4 id="line-title">Total: 4</h4>
-      <canvas id="line" width="400" height="400"></canvas>
-    </div>
+    <q-btn @click="printPage" icon="print" color="primary" class="print-btn"
+      >Printer</q-btn
+    >
   </div>
 </template>
 
@@ -25,6 +28,14 @@ export default {
       barValues: [],
       lineValues: [],
     };
+  },
+  methods: {
+    printPage() {
+      const btn = document.querySelector(".print-btn");
+      btn.style.display = "none";
+      window.print();
+      btn.style.display = "block";
+    },
   },
   created() {},
   mounted() {
@@ -94,7 +105,7 @@ export default {
               {
                 label: "Salary",
                 data: this.barValues.map((el) => el.salary),
-                backgroundColor: ["rgba(173, 216, 250, 0.5)"],
+                backgroundColor: ["rgba(250, 231, 61, 0.5)"],
               },
             ],
           },
@@ -157,12 +168,31 @@ export default {
 #bar-title {
   text-align: center;
 }
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .all {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
   align-items: center;
+  width: 100%;
+  border-radius: 10px;
 }
 .charts {
   margin-left: 3%;
+}
+
+.page-title {
+  font-weight: bold;
+  text-align: center;
+}
+
+.print-btn {
+  margin-top: 5%;
 }
 </style>
