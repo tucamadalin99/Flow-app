@@ -1,6 +1,6 @@
 # Flow-app
 VueJS + Quasar + nodeJS pwa
-Progressive Web Application for Company Management (CRM)
+Progressive Web Application for Company Management
 # How to run:
  - Open a terminal in the main directory
  - Run XAMPP or any other DBMS for SQL databases
