@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             git: DataTypes.STRING,
             performance: DataTypes.FLOAT,
             salary: DataTypes.FLOAT,
+            isLead: DataTypes.BOOLEAN,
             isManager: DataTypes.BOOLEAN,
             isCEO: DataTypes.BOOLEAN,
             status: DataTypes.STRING

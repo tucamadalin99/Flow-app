@@ -19,7 +19,7 @@
             <p class="details">Name</p>
             <q-input
               dense
-              v-model="getUser.fullName"
+              v-model="user.fullName"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -30,7 +30,7 @@
             <p class="details">Department</p>
             <q-input
               dense
-              v-model="getUser.department"
+              v-model="user.department"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -41,7 +41,7 @@
             <p class="details">Division</p>
             <q-input
               dense
-              v-model="getUser.division"
+              v-model="user.division"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -52,7 +52,7 @@
             <p class="details">Position</p>
             <q-input
               dense
-              v-model="getUser.role"
+              v-model="user.role"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -63,7 +63,7 @@
             <p class="details">Facebook</p>
             <q-input
               dense
-              v-model="getUser.facebook"
+              v-model="user.facebook"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -74,7 +74,7 @@
             <p class="details">Git</p>
             <q-input
               dense
-              v-model="getUser.git"
+              v-model="user.git"
               autofocus
               @keyup.enter="prompt = false"
               :rules="[
@@ -96,15 +96,8 @@
         </q-card>
       </q-dialog>
     </div>
-    <div class="account-header">
-      <q-avatar size="130px" class="avatar">
-        <img
-          class="profile-pic"
-          src="https://cdn.quasar.dev/img/boy-avatar.png"
-        />
-      </q-avatar>
-    </div>
-    <div class="vertical-center">
+
+    <!-- <div class="vertical-center">
       <q-btn
         @click="toggleEditInfo"
         id="edit-btn"
@@ -112,35 +105,98 @@
         color="primary"
         icon="create"
       />
-    </div>
-    <div class="account-info">
-      <q-list>
-        <chip
-          :elementName="`Nume`"
-          :elementValue="this.user.fullName"
-          :value="this.user.fullName"
-        ></chip>
-        <chip
-          :elementName="`Departament`"
-          :elementValue="this.user.department"
-        ></chip>
-        <chip
-          :elementName="`Divizie`"
-          :elementValue="this.user.division"
-        ></chip>
-        <chip :elementName="`Pozitie`" :elementValue="this.user.role"></chip>
-        <chip
-          :elementName="`Facebook`"
-          :elementValue="this.user.facebook"
-        ></chip>
-        <chip :elementName="`Git`" :elementValue="this.user.git"></chip>
-      </q-list>
+    </div> -->
+    <div class="profile-info flex flex-center">
+      <q-card class="my-card">
+        <q-card-section class="section">
+          <div class="account-header">
+            <q-avatar size="130px" class="avatar">
+              <img
+                class="profile-pic"
+                src="https://cdn.quasar.dev/img/boy-avatar.png"
+              />
+            </q-avatar>
+            <div class="edt-btn">
+              <q-btn
+                @click="toggleEditInfo"
+                id="edit-btn"
+                round
+                color="primary"
+                icon="create"
+              />
+            </div>
+            <div class="inner-name" style="position: absolute; top: 145px">
+              <p class="text-h6" style="color: white">
+                {{ user.fullName }}
+              </p>
+            </div>
+          </div>
+          <q-separator spaced />
+        </q-card-section>
+        <!-- <p class="text-h6">
+            <q-icon size="md" name="person" />{{ user.fullName }}
+          </p> -->
+        <q-card-section class="section flex flex-center">
+          <q-card class="inner-card">
+            <q-img src="https://cdn.quasar.dev/img/parallax2.jpg">
+              <div class="text-h5 absolute-bottom text-center">
+                {{ user.department }}
+              </div>
+            </q-img>
+            <q-card-section>
+              <p class="text-body1">Your status</p>
+              <q-badge
+                v-if="user.status === 'Active'"
+                class="text-body1"
+                color="green"
+              >
+                {{ user.status }}
+              </q-badge>
+              <q-badge
+                v-else-if="user.status === 'Inactive'"
+                class="text-body1"
+                color="red-8"
+              >
+                {{ user.status }}
+              </q-badge>
+              <q-badge v-else class="text-body1" color="orange">
+                {{ user.status }}
+              </q-badge>
+            </q-card-section>
+          </q-card>
+        </q-card-section>
+
+        <q-card-section>
+          <!-- <p class="text-h6">
+            <q-icon size="md" name="person" />{{ user.fullName }}
+          </p>
+          <q-separator spaced style="width: 300px" /> -->
+
+          <p class="text-h6">
+            <q-icon size="md" name="build" />{{ user.role }}
+          </p>
+          <q-separator spaced style="width: 300px" />
+
+          <p class="text-h6">
+            <q-icon size="md" name="call" />{{ user.phone }}
+          </p>
+          <q-separator spaced style="width: 300px" />
+
+          <p class="text-h6">
+            <q-icon size="md" name="facebook" />{{ user.facebook }}
+          </p>
+          <q-separator spaced style="width: 300px" />
+
+          <p class="text-h6"><q-icon size="md" name="code" />{{ user.git }}</p>
+        </q-card-section>
+        <q-separator spaced />
+      </q-card>
     </div>
   </div>
 </template>
 
 <script>
-import chip from "../components/Chip";
+//import chip from "../components/Chip";
 import { ParticlesBg } from "particles-bg-vue";
 import { mapGetters, mapActions } from "vuex";
 import Axios from "axios";
@@ -156,7 +212,7 @@ export default {
     };
   },
   components: {
-    chip,
+    //chip,
     ParticlesBg,
   },
   methods: {
@@ -166,14 +222,16 @@ export default {
       }
     },
     handleUpdate: function () {
-      const names = this.user.fullName.split(" ");
+      let userCopy = {};
+      Object.assign(userCopy, this.user);
+      const names = userCopy.fullName.split(" ");
       const updatedUser = {
         name: names[0],
         surname: names[1],
-        division: this.user.division,
-        role: this.user.role,
-        facebook: this.user.facebook,
-        git: this.user.git,
+        division: userCopy.division,
+        role: userCopy.role,
+        facebook: userCopy.facebook,
+        git: userCopy.git,
       };
       Axios.put("http://localhost:8081/api/user/updateInfo", updatedUser, {
         withCredentials: true,
@@ -199,19 +257,45 @@ export default {
   },
   computed: mapGetters(["getUser"]),
 
-  created() {
+  async created() {
     console.log("before create");
+   await this.fetchUser();
     // console.log(this.user);
     // this.fetchUser();
     this.user = this.getUser;
+    Object.assign(this.user, this.getUser);
   },
 };
 </script>
 <style scoped>
 .account-header {
-  display: grid;
+  /* display: grid; */
+  display: flex;
   justify-content: center;
+  height: 11rem;
   background-image: linear-gradient(to left bottom, #2d6cb5, #1a154c);
+  /* height: 180px; */
+}
+
+.q-separator {
+  margin: 0 auto;
+}
+
+.section {
+  padding: 7px;
+}
+
+.inner-card {
+  width: 100%;
+  max-width: 250px;
+  height: 270px;
+}
+
+.edt-btn {
+  position: absolute;
+  top: 105px;
+  z-index: 100;
+  margin-left: 80px;
 }
 .avatar {
   margin-top: 10px;
@@ -230,9 +314,16 @@ export default {
   padding: 1%;
   border-radius: 8px;
 }
+.profile-info {
+  margin-top: 2%;
+  justify-content: center;
+  text-align: center;
+}
 .q-chip {
   padding: 7px 12px;
-  width: 120px;
+  width: 300px;
+  text-align: center;
+  /* width: fit-content; */
 }
 
 /* .row {
@@ -283,9 +374,19 @@ export default {
 .q-list {
   margin-top: 5px;
 }
+
+.my-card {
+  width: 100%;
+  max-width: 800px;
+}
+
 @media only screen and (max-width: 600px) {
   .particles {
     display: none;
+  }
+
+  .account-info {
+    width: 100%;
   }
 }
 </style>

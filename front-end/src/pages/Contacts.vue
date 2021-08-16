@@ -23,7 +23,6 @@
           flat
           bordered
           class="statement-table"
-          title="Contacts"
           :data="userData"
           :hide-header="mode === 'grid'"
           :columns="usersColumns"
@@ -34,6 +33,18 @@
           :pagination.sync="pagination"
           :rows-per-page-options="[0]"
         >
+          <template v-slot:top-left>
+            <q-btn
+              class="export-btn"
+              style="margin-right: 5px"
+              color="primary"
+              icon-right="archive"
+              label="Export to csv"
+              no-caps
+              @click="exportTable"
+            />
+          </template>
+
           <template v-slot:top-right="props">
             <q-select
               class="filters"
@@ -102,7 +113,7 @@
             </q-btn>
             <div class="q-pa-sm q-gutter-sm">
               <q-dialog v-model="show_dialog">
-                <q-card style="width: 600px; max-width: 60vw">
+                <q-card style="width: 600px; max-width: 100vw">
                   <q-card-section>
                     <q-btn
                       round
@@ -134,7 +145,7 @@
                           </q-item-section>
                         </q-item>
                         <q-item>
-                          <q-item-section>
+                          <q-item-section @click="toggleMailArea">
                             <q-item-label class="q-pb-xs">Email</q-item-label>
                             <!-- <q-input
                               dense
@@ -142,6 +153,7 @@
                               v-model="editedItem.email"
                             /> -->
                             <q-chip
+                              class="email-section"
                               color="primary"
                               text-color="white"
                               icon="email"
@@ -151,9 +163,38 @@
                             </q-chip>
                           </q-item-section>
                         </q-item>
+                        <q-item v-if="isEmailActive">
+                          <q-item-section>
+                            <div class="q-pa-md email-container">
+                              <q-input
+                                v-model="emailText"
+                                filled
+                                type="textarea"
+                              />
+                              <div class="email-btns-container">
+                                <q-btn
+                                  @click="sendMail"
+                                  class="q-mt-md"
+                                  label="Send"
+                                  color="green-8"
+                                  icon="send"
+                                ></q-btn>
+                                <q-btn
+                                  @click="toggleMailArea"
+                                  class="q-mt-md q-ml-md"
+                                  label="Exit"
+                                  color="red-8"
+                                  icon="cancel"
+                                ></q-btn>
+                              </div>
+                            </div>
+                          </q-item-section>
+                        </q-item>
                         <q-item>
                           <q-item-section>
-                            <q-item-label class="q-pb-xs">Phone</q-item-label>
+                            <q-item-label class="q-pb-xs"
+                              >Phone (tap to call)</q-item-label
+                            >
                             <!-- <q-input
                               dense
                               outlined
@@ -161,11 +202,16 @@
                             /> -->
                             <q-chip
                               color="primary"
-                              text-color="white"
+                              text-color="green-5"
                               icon="phone"
                               size="18px"
                             >
-                              {{ editedItem.phone }}
+                              <a
+                                class="phone-href"
+                                :href="'tel:' + editedItem.phone"
+                              >
+                                {{ editedItem.phone }}
+                              </a>
                             </q-chip>
                           </q-item-section>
                         </q-item>
@@ -217,24 +263,6 @@
                             </q-chip>
                           </q-item-section>
                         </q-item>
-                        <q-item v-if="statusChangePermission">
-                          <q-item-section>
-                            <q-item-label class="q-pb-xs"
-                              >Status:Active/Inactive</q-item-label
-                            >
-                            <!-- <q-input
-                              dense
-                              outlined
-                              v-model="editedItem.status"
-                            /> -->
-                            <q-select
-                              outlined
-                              v-model="editedItem.status"
-                              :options="['Active', 'Inactive']"
-                              label="Current Status"
-                            />
-                          </q-item-section>
-                        </q-item>
                       </q-list>
                     </q-form>
                   </q-card-section>
@@ -261,6 +289,112 @@
                 </q-card>
               </q-dialog>
             </div>
+
+            <div class="q-pa-sm q-gutter-sm">
+              <q-dialog v-model="show_activity">
+                <q-card style="width: 600px; max-width: 100vw">
+                  <q-card-section>
+                    <q-btn
+                      round
+                      flat
+                      dense
+                      icon="close"
+                      class="float-right"
+                      color="grey-8"
+                      v-close-popup
+                    ></q-btn>
+                    <div class="text-h6">
+                      {{ "Activity of " + editedItem.name }}
+                    </div>
+                  </q-card-section>
+                  <q-separator inset></q-separator>
+                  <q-card-section class="q-pt-none">
+                    <q-form class="q-gutter-md">
+                      <q-list v-if="tasksLength > 0">
+                        <q-item
+                          class="col projects"
+                          :key="project.name"
+                          v-for="project in editedItem.activity"
+                        >
+                          <q-item-section>
+                            <!-- <q-input dense outlined v-model="editedItem.git" /> -->
+                            <q-chip
+                              color="primary"
+                              text-color="white"
+                              icon="work"
+                              size="18px"
+                            >
+                              {{ project.name }}
+                            </q-chip>
+                          </q-item-section>
+                          <q-item-section>
+                            <ul>
+                              <li v-for="task in project.tasks" :key="task.id">
+                                {{ task.name }}
+                              </li>
+                            </ul>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                      <p class="text-h6 text-center q-pt-lg" v-else>
+                        <q-icon
+                          class="q-mr-xs"
+                          size="md"
+                          name="sentiment_very_dissatisfied"
+                        />No activity
+                      </p>
+
+                      <q-item v-if="statusChangePermission">
+                        <q-item-section>
+                          <q-item-label class="q-pb-xs"
+                            >Status:Active/Inactive</q-item-label
+                          >
+                          <q-select
+                            outlined
+                            v-model="editedItem.status"
+                            :options="['Active', 'Inactive']"
+                            label="Current Status"
+                          />
+                        </q-item-section>
+                      </q-item>
+                    </q-form>
+                  </q-card-section>
+                  <q-card-section>
+                    <q-card-actions align="right">
+                      <q-btn
+                        flat
+                        label="Cancel"
+                        color="warning"
+                        dense
+                        v-close-popup
+                      ></q-btn>
+                      <q-btn
+                        v-if="statusChangePermission"
+                        flat
+                        label="OK"
+                        color="primary"
+                        dense
+                        v-close-popup
+                        @click="updateRow"
+                      ></q-btn>
+                    </q-card-actions>
+                  </q-card-section>
+                </q-card>
+              </q-dialog>
+            </div>
+          </template>
+
+          <template #body-cell-activity="props">
+            <q-td :props="props">
+              <q-btn
+                size="sm"
+                color="primary"
+                round
+                dense
+                @click="toggleActivity(props.row)"
+                icon="assignment_returned"
+              />
+            </q-td>
           </template>
 
           <template #body-cell-status="props">
@@ -295,7 +429,7 @@
             </q-td>
           </template>
 
-          <!--           <template v-slot:bottom>
+          <!-- <template v-slot:bottom>
             <div class="pagination-total q-mt-sm flex flex-center">
               <div class="text-medium-regular">
                 Total {{ userData.length }}
@@ -318,7 +452,11 @@
 
           <template v-slot:item="props">
             <div
-              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+              class="
+                q-pa-xs
+                col-xs-12 col-sm-6 col-md-4 col-lg-3
+                grid-style-transition
+              "
               :style="props.selected ? 'transform: scale(0.95);' : ''"
             >
               <q-card :class="props.selected ? 'bg-grey-2' : ''">
@@ -327,8 +465,9 @@
                   {{props.row.name}}
                 </q-card-section>
                 <q-separator></q-separator> -->
+
                 <q-list dense>
-                  <q-item v-for="col in props.cols" :key="col.name">
+                  <q-item class="col" v-for="col in props.cols" :key="col.name">
                     <q-item-section>
                       <q-item-label>{{ col.label }}</q-item-label>
                     </q-item-section>
@@ -357,7 +496,17 @@
                         icon="person"
                         @click="editItem(props.row)"
                       ></q-btn>
+                      <q-btn
+                        v-else-if="col.name === 'activity'"
+                        size="sm"
+                        color="primary"
+                        round
+                        dense
+                        @click="toggleActivity(props.row)"
+                        icon="assignment_returned"
+                      ></q-btn>
                       <q-item-label
+                        style="font-size: 13px"
                         v-else
                         caption
                         :class="col.classes ? col.classes : ''"
@@ -377,11 +526,35 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import Axios from "axios";
+import { exportFile } from "quasar";
+import emailjs from "emailjs-com";
+
+function wrapCsvValue(val, formatFn) {
+  let formatted = formatFn !== void 0 ? formatFn(val) : val;
+
+  formatted =
+    formatted === void 0 || formatted === null ? "" : String(formatted);
+
+  formatted = formatted.split('"').join('""');
+  /**
+   * Excel accepts \n and \r in strings, but some other CSV parsers do not
+   * Uncomment the next two lines to escape new lines
+   */
+  // .split('\n').join('\\n')
+  // .split('\r').join('\\r')
+  return `"${formatted}"`;
+}
+
 export default {
   data() {
     return {
       statusChangePermission: false,
       inFs: false,
+      tasksLength: 0,
+      isEmailActive: false,
+      emailText: "",
+      emailingUser: {},
       columns: [
         // { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
         // { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
@@ -394,6 +567,7 @@ export default {
 
       noti: () => {},
       show_dialog: false,
+      show_activity: false,
       editedIndex: -1,
       editedItem: {
         name: "",
@@ -416,6 +590,11 @@ export default {
       filter: "",
       mode: "list",
       usersColumns: [
+        {
+          name: "activity",
+          align: "left",
+          label: "Activity",
+        },
         {
           name: "name",
           align: "left",
@@ -486,6 +665,51 @@ export default {
     };
   },
   methods: {
+    sendMail() {
+      let email = {
+        from_name: `${this.emailingUser.fullName}`,
+        message: this.emailText,
+        email: "maad368@gmail.com",
+      };
+      if (email.message && email.message.length > 5) {
+        emailjs
+          .send(
+            "service_x7kx7af",
+            "template_tbmbkvt",
+            email,
+            "user_3UWke7M5FbVj1uHRdaApi"
+          )
+          .then(
+            (result) => {
+              this.$q.notify({
+                color: "indigo-8",
+                textColor: "white",
+                icon: "cloud_done",
+                message: `Email sent!`,
+              });
+              this.isEmailActive = false;
+            },
+            (error) => {
+              this.$q.notify({
+                color: "red-8",
+                textColor: "white",
+                icon: "warning",
+                message: `An error has occured and the email was not sent`,
+              });
+            }
+          );
+      } else {
+        this.$q.notify({
+          color: "red-8",
+          textColor: "white",
+          icon: "warning",
+          message: `Make sure you don't send an empty and useless email!`,
+        });
+      }
+    },
+    toggleMailArea() {
+      this.isEmailActive = !this.isEmailActive;
+    },
     editRow(props) {
       this.noti();
       // do something
@@ -531,6 +755,14 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.show_dialog = true;
     },
+    toggleActivity(item) {
+      this.editedIndex = this.userData.findIndex(
+        (v, i) => v.__index === item.__index
+      );
+      this.editedItem = Object.assign({}, item);
+      this.tasksLength = Object.keys(this.editedItem.activity).length;
+      this.show_activity = true;
+    },
     close() {
       this.show_dialog = false;
       setTimeout(() => {
@@ -544,11 +776,20 @@ export default {
     },
     updateRow() {
       this.userData.splice(this.editedIndex, 1, this.editedItem);
-      this.$q.notify({
-        type: "positive",
-        message: `Item '${this.editedItem.name}' updated.`,
-        timeout: 500,
-      });
+      Axios.put(
+        "http://localhost:8081/api/manager/changeStatus",
+        { email: this.editedItem.email, status: this.editedItem.status },
+        { withCredentials: true }
+      )
+        .then(() => {
+          this.$q.notify({
+            type: "positive",
+            message: `Member '${this.editedItem.name}' updated.`,
+            timeout: 500,
+          });
+          this.fetchUsers(); //not sure if optimal
+        })
+        .catch((err) => console.log(err));
     },
     onStatusClick() {
       console.log("clicked");
@@ -556,13 +797,15 @@ export default {
     handleFilterDepartment(value) {
       let storedUsers = this.getUsers;
       let filteredTable = [];
-      if (value === "All" && this.filteredStatusValue !== "All") {
+      if (value === "All" && this.filteredStatusValue === "") {
+        this.userData = storedUsers;
+      } else if (value === "All" && this.filteredStatusValue !== "All") {
         storedUsers.forEach((el) => {
           if (el.status === this.filteredStatusValue) {
             filteredTable.push(el);
           }
+          this.userData = filteredTable;
         });
-        this.userData = filteredTable;
       } else if (
         value !== "All" &&
         (this.filteredStatusValue === "" || this.filteredStatusValue === "All")
@@ -607,7 +850,6 @@ export default {
         value !== "All" &&
         (this.filteredDepValue !== "" || this.filteredDepValue !== "All")
       ) {
-        console.log("second");
         storedUsers.forEach((el) => {
           if (el.status === value && el.department === this.filteredDepValue) {
             filteredTable.push(el);
@@ -629,19 +871,47 @@ export default {
         this.userData = storedUsers;
       }
     },
+    exportTable() {
+      // naive encoding to csv format
+      const content = [this.usersColumns.map((col) => wrapCsvValue(col.label))]
+        .concat(
+          this.userData.map((row) =>
+            this.usersColumns
+              .map((col) =>
+                wrapCsvValue(
+                  typeof col.field === "function"
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format
+                )
+              )
+              .join(",")
+          )
+        )
+        .join("\r\n");
+      console.log(content);
+
+      const status = exportFile("table-export.csv", content, "text/csv");
+
+      if (status !== true) {
+        this.$q.notify({
+          message: "Browser denied file download...",
+          color: "negative",
+          icon: "warning",
+        });
+      }
+    },
     ...mapActions(["fetchUsers"]),
   },
   computed: mapGetters(["getUsers", "getUser"]),
-  created() {
-    //this.fetchUsers();
+  async created() {
+    await this.fetchUsers();
     const currentUser = this.getUser;
+    this.emailingUser = this.getUser;
     if (currentUser.isManager || currentUser.isCEO) {
       this.statusChangePermission = true;
     }
-    console.log("getter", this.statusChangePermission);
-    //console.log("morti", this.getUsers);
     this.userData = this.getUsers;
-    //console.log(this.getUsers);
   },
   mounted() {
     // add indices
@@ -664,6 +934,26 @@ td:hover {
   border-radius: 2%;
 }
 
+.projects {
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-href {
+  text-decoration: none;
+  color: white;
+}
+
+.email-section:hover {
+  cursor: pointer;
+}
+
+.email-btns-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
 @media only screen and (max-width: 600px) {
   .filters {
     margin: 2%;
@@ -673,6 +963,20 @@ td:hover {
     margin-left: 0;
     margin-top: 0;
     border-radius: 0;
+  }
+
+  .q-chip {
+    max-width: 300px;
+  }
+
+  .export-btn {
+    margin-left: 6px;
+  }
+
+  .email-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 </style>

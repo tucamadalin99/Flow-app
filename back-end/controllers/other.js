@@ -1,6 +1,8 @@
 const connection = require('../models').connection;
 const DepartmentModel = require('../models').Department;
 const ProjectModel = require('../models').Project;
+const ProjectRefModel = require('../models').ProjectRef;
+const TaskModel = require('../models').Task;
 const RoleModel = require('../models').Role;
 const UserModel = require('../models').User;
 
@@ -25,14 +27,14 @@ const controller = {
 
             }
 
-            const projects = ["Tap That Job", "SpringIT", "Serile Teatrului Studentesc", "Academia SpErantei", "Dare to Speak"];
+            const projects = ["Tap That Job", "SpringIT", "Serile Teatrului Studentesc", "Academia SpErantei", "Dare to Speak", "General", "General HR", "General Sales", "General PR", "General IT"];
             let project = { name: "" }
             for (let i = 0; i < projects.length; i++) {
                 project.name = projects[i];
                 await ProjectModel.create(project);
             }
 
-            const roles = ["Member", "Team Lead", "Project Manager"]
+            const roles = ["PR Member", "IT Back-end Member", "IT Front-end Member", "HR Member", "Sales Member","Team Lead", "Project Manager", "Ajutor HR", "Ajutor Sales", "Ajutor IT", "Ajutor PR"]
             let role = { role: "" };
             for (let i = 0; i < roles.length; i++) {
                 role.role = roles[i];
@@ -45,7 +47,19 @@ const controller = {
         })
     },
     getAllUsers: async (req, res) => {
-        UserModel.findAll({ attributes: ['name', 'surname', 'division', 'role', 'email', 'phone', 'facebook', 'git', 'status'], include: DepartmentModel })
+        UserModel.findAll({
+            attributes: ['id', 'name', 'surname', 'division', 'role', 'email', 'phone', 'facebook', 'git', 'status'],
+            include: [{
+                model: ProjectRefModel, attributes: ['id'],
+                include: [
+                    {
+                        model: ProjectModel, attributes: ['id', 'name']
+                    },
+                    { model: TaskModel, where: { status: "resolved" } }
+                ],
+            },
+            { model: DepartmentModel }],
+        })
             .then((response) => res.status(200).send(response))
             .catch((err) => res.status(500).send(err));
     }

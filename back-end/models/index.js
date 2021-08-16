@@ -6,6 +6,7 @@ const ProjectModel = require('./project');
 const ProjectRefModel = require('./projectRef');
 const RoleModel = require('./roles');
 const RoleRefModel = require('./rolesRef');
+const StatusListModel = require('./statusList');
 const db = require('../config/db');
 
 const User = UserModel(db, Sequelize);
@@ -15,9 +16,13 @@ const Project = ProjectModel(db, Sequelize);
 const ProjectRef = ProjectRefModel(db, Sequelize);
 const Role = RoleModel(db, Sequelize);
 const RoleRef = RoleRefModel(db, Sequelize);
+const StatusList = StatusListModel(db, Sequelize);
 
 Department.hasMany(User);
 User.belongsTo(Department);
+
+User.hasMany(StatusList);
+StatusList.belongsTo(User);
 
 User.hasMany(RoleRef, { foreignKey: 'userId' });
 RoleRef.belongsTo(User, { foreignKey: 'userId' });
@@ -34,8 +39,13 @@ ProjectRef.belongsTo(User, { foreignKey: "userId" });
 Project.hasMany(ProjectRef, { foreignKey: "projectId" });
 ProjectRef.belongsTo(Project, { foreignKey: "projectId" });
 
-Task.hasMany(ProjectRef, { foreignKey: "taskId" });
-ProjectRef.belongsTo(Task, { foreignKey: "taskId" });
+Task.hasMany(ProjectRef, { foreignKey: "taskId" }, {onDelete: "cascade"});
+ProjectRef.belongsTo(Task, { foreignKey: "taskId" }, { onDelete: "cascade" });
+
+Department.hasMany(ProjectRef, { foreignKey: "departmentId" });
+ProjectRef.belongsTo(Department, { foreignKey: "departmentId" });
+
+
 
 
 // User.belongsToMany(Role, {
@@ -80,5 +90,6 @@ module.exports = {
     Role,
     RoleRef,
     Department,
+    StatusList,
     connection: db
 }

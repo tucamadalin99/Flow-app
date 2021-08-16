@@ -31,7 +31,7 @@
         style="height: 150px"
         class="avatar-bg"
       >
-        <div class="absolute-bottom bg-transparent">
+        <div @click="goToProfile" class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
           </q-avatar>
@@ -43,12 +43,34 @@
         style="height: calc(100% - 150px); border-right: 1px solid #ddd"
       >
         <q-list>
+          <q-item clickable exact to="/">
+            <q-item-section avatar>
+              <q-icon name="home" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Home</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item-label v-if="isLead" header class="text-grey-8">
+            Team Lead</q-item-label
+          >
+          <q-item
+            style="color: #2d6cb5"
+            v-if="isLead"
+            clickable
+            exact
+            to="/team"
+          >
+            <q-item-section avatar>
+              <q-icon name="group_work" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Your Team</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item-label header class="text-grey-8"> Manage </q-item-label>
-          <!-- <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        /> -->
+
           <q-item clickable exact to="/account">
             <q-item-section avatar>
               <q-icon name="person" />
@@ -84,6 +106,43 @@
               <q-item-label>Tasks</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item clickable exact to="/gantt">
+            <q-item-section avatar>
+              <q-icon name="insights" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Planning</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable exact to="/flow">
+            <q-item-section avatar>
+              <q-icon name="account_tree" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Draw Flow Chart</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item v-if="isManager" clickable exact to="/manager">
+            <q-item-section avatar>
+              <q-icon name="work" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Department Analysis</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item v-if="isManager" clickable exact to="/salaries">
+            <q-item-section avatar>
+              <q-icon name="attach_money" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Salaries Data</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <q-item-label header class="text-grey-8"> Contact </q-item-label>
 
           <q-item clickable exact to="/contacts">
@@ -128,7 +187,9 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </q-page-container>
   </q-layout>
 </template>
@@ -136,14 +197,15 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import Axios from "axios";
+
 export default {
   name: "MainLayout",
-  // components: { EssentialLink },
   data() {
     return {
       leftDrawerOpen: false,
-      // essentialLinks: linksData,
       dark: false,
+      isLead: false,
+      isManager: false,
     };
   },
   methods: {
@@ -161,6 +223,7 @@ export default {
             icon: "pan_tool",
             message: `See you soon!`,
           });
+          this.$q.cookies.remove("cookieLogin");
           this.$router.push("/login");
         })
         .catch(() => {
@@ -172,15 +235,32 @@ export default {
           });
         });
     },
-    ...mapActions(["fetchUser", "fetchUsers", "fetchActivity"]),
+    goToProfile() {
+      if (this.$router.currentRoute.fullPath !== "/account") {
+        this.$router.push("/account");
+      }
+    },
+    ...mapActions([
+      "fetchUser",
+      "fetchUsers",
+      "fetchActivity",
+      "fetchCurrentTasks",
+      "fetchLeadProject",
+      "fetchProjectTasks",
+    ]),
   },
   computed: mapGetters(["getUser"]),
-  created() {
-    // this.$q.dark.toggle(true);
-    this.fetchUser();
-    this.fetchUsers();
-    this.fetchActivity();
+  async created() {
+    await this.fetchUser();
+    const currentUser = this.getUser;
+    this.isLead = currentUser.isLead;
+    this.isManager = currentUser.isManager;
+    if (this.isLead) {
+      await this.fetchLeadProject();
+      await this.fetchProjectTasks();
+    }
   },
+  mounted() {},
 };
 </script>
 <style scoped>
@@ -199,5 +279,9 @@ export default {
   height: 40px;
   position: relative;
   top: 4px;
+}
+
+.bg-transparent:hover {
+  cursor: pointer;
 }
 </style>

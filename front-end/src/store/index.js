@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import user from './modules/user';
 import users from './modules/users';
 import userActivity from './modules/userActivity'
+import lead from './modules/lead'
 import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
@@ -17,13 +18,14 @@ export default function ( /* { ssrContext } */) {
     modules: {
       user,
       users,
-      userActivity
+      userActivity,
+      lead
     },
-    plugins: [
-      createPersistedState({
-        storage: window.sessionStorage
-      })
-    ],
+    // plugins: [
+    //   createPersistedState({
+    //     storage: window.sessionStorage
+    //   })
+    // ],
     // enable strict mode (adds overhead!)
     // for dev mode only
     strict: process.env.DEV

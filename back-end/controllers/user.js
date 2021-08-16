@@ -48,7 +48,8 @@ const controller = {
 
     logout: async (req, res) => {
         req.logOut();
-        res.status(200).send({ message: "Logged out" });
+        res.status(200).clearCookie('cookieLogin').send({ message: "Logged out" });
+
     },
 
     getProfile: async (req, res) => {
@@ -60,11 +61,14 @@ const controller = {
                 department: dep.name,
                 division: currentUser.division,
                 email: currentUser.email,
+                phone: currentUser.phone,
                 role: currentUser.role,
                 facebook: currentUser.facebook,
                 git: currentUser.git,
                 isManager: currentUser.isManager,
-                isCEO: currentUser.isCEO
+                isLead: currentUser.isLead,
+                isCEO: currentUser.isCEO,
+                status: currentUser.status
             }
             res.status(200).send(user);
         } catch (err) {
@@ -95,7 +99,8 @@ const controller = {
         let assignment = {
             userId: currentUser.id,
             projectId: req.body.projectId,
-            taskId: req.body.taskId
+            taskId: req.body.taskId,
+            departmentId: currentUser.departmentId
         }
 
         let errors = validateUser.task(assignment);
@@ -113,7 +118,8 @@ const controller = {
         let resignment = {
             userId: currentUser.id,
             projectId: req.body.projectId,
-            taskId: req.body.taskId
+            taskId: req.body.taskId,
+            departmentId: currentUser.departmentId
         }
 
         let errors = validateUser.task(resignment);
@@ -145,10 +151,9 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
-
     },
 
-    getResolvedActivity: async (req, res) => {
+    getActivity: async (req, res) => {
         const currentUser = await req.user;
         try {
             const response = await UserModel.findOne({
@@ -156,7 +161,7 @@ const controller = {
                 include: {
                     model: ProjectRefModel, attributes: ['id'],
                     include: [{ model: ProjectModel, attributes: ['id', 'name'] },
-                    { model: TaskModel, where: { status: "resolved" } }]
+                    { model: TaskModel, where: { status: req.params.type } }]
                 }
             })
             let activityArray = {};
@@ -179,8 +184,7 @@ const controller = {
         } catch (err) {
             return res.status(500).send(err);
         }
-
-    }
+    },
 }
 
 module.exports = controller;
